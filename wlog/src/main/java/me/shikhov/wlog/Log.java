@@ -200,7 +200,7 @@ public class Log
     }
     //endregion
 
-    private static LogWriter GLOBAL_LOGWRITER = new LogcatWriter();
+    private static LogWriter GLOBAL_LOGWRITER = LogcatWriter.getInstance();
 
     public static void setGlobalLogWriter(@NonNull LogWriter logWriter)
     {
@@ -261,7 +261,11 @@ public class Log
         }
     }
 
-    public void release()
+    /**
+     * Shortcut to release Log object
+     * @see #release()
+     */
+    public void r()
     {
         if(builder.length() > 0)
         {
@@ -272,6 +276,15 @@ public class Log
 
         Loggers.removeLogger(this);
         disposed = true;
+    }
+
+    /**
+     * Disposes this log object and returns underlying stringbuilder to the pool.
+     * @see #r()
+     */
+    public void release()
+    {
+        r();
     }
 
     /**
@@ -313,6 +326,7 @@ public class Log
     /**
      * Shortcut for {@link #flush()} method. <br/>
      * Flushes data to logWriter.
+     * @see #flush()
      * @return this object.
      */
     @NonNull
@@ -322,6 +336,14 @@ public class Log
 
         if(builder.length() > 0)
         {
+            if(throwableToLog != null)
+            {
+                builder.append("\n");
+                builder.append(getStackTraceString(throwableToLog));
+
+                throwableToLog = null;
+            }
+
             message = builder.toString();
         }
         else
@@ -354,6 +376,98 @@ public class Log
         return f();
     }
 
+    //region append methods
+    @NonNull
+    public Log append(boolean value)
+    {
+        return a(value);
+    }
+
+    @NonNull
+    public Log a(boolean value)
+    {
+        checkDisposed();
+        builder.append(value);
+        return this;
+    }
+
+    @NonNull
+    public Log append(char value)
+    {
+        return a(value);
+    }
+
+    @NonNull Log a(char value)
+    {
+        checkDisposed();
+        builder.append(value);
+        return this;
+    }
+
+    @NonNull
+    public Log append(long value)
+    {
+        return a(value);
+    }
+
+    @NonNull Log a(long value)
+    {
+        checkDisposed();
+        builder.append(value);
+        return this;
+    }
+
+    @NonNull
+    public Log append(float value)
+    {
+        return a(value);
+    }
+
+    @NonNull Log a(float value)
+    {
+        checkDisposed();
+        builder.append(value);
+        return this;
+    }
+
+    @NonNull
+    public Log append(double value)
+    {
+        return a(value);
+    }
+
+    @NonNull Log a(double value)
+    {
+        checkDisposed();
+        builder.append(value);
+        return this;
+    }
+
+    @NonNull
+    public Log append(char[] value)
+    {
+        return a(value);
+    }
+
+    @NonNull Log a(char[] value)
+    {
+        checkDisposed();
+        builder.append(value);
+        return this;
+    }
+
+    @NonNull
+    public Log append(int value)
+    {
+        return a(value, 10);
+    }
+
+    @NonNull
+    public Log a(int value)
+    {
+        return a(value, 10);
+    }
+
     @NonNull
     public Log append(int value, int radix)
     {
@@ -363,6 +477,8 @@ public class Log
     @NonNull
     public Log a(int value, int radix)
     {
+        checkDisposed();
+
         if(radix == 10)
         {
             builder.append(value);
@@ -371,36 +487,50 @@ public class Log
         {
             builder.append(Integer.toString(value, radix));
         }
+
         return this;
     }
 
     @NonNull
-    public Log append(boolean value)
-    {
-        return a(value);
-    }
-
-    public Log a(boolean value)
-    {
-        builder.append(value);
-        return this;
-    }
-
-
     public Log append(@Nullable Object object)
     {
+        return a(object);
+    }
 
+    public Log a(@Nullable Object object)
+    {
+        checkDisposed();
+        builder.append(object);
+
+        return this;
     }
 
     @NonNull
     public Log a(@NonNull String string)
     {
         checkDisposed();
-
         builder.append(string);
 
         return this;
     }
+
+    @NonNull
+    public Log a(@Nullable Object[] array)
+    {
+        checkDisposed();
+        if(array == null)
+            builder.append("null");
+        else
+        {
+            ArrayFormatter.format(ArrayFormatter.getDefaultFormatter(),
+                    builder, array);
+        }
+
+        return this;
+    }
+
+    //endregion
+
 
     private void checkDisposed()
     {
@@ -417,7 +547,7 @@ public class Log
 
     public Log i()
     {
-        logWriter.i(tag, builder.toString());
+//        logWriter.i(tag, builder.toString());
 
         builder.delete(0, builder.length());
 

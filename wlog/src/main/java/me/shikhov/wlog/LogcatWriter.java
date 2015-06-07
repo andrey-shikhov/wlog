@@ -1,11 +1,26 @@
 package me.shikhov.wlog;
 
+import android.support.annotation.NonNull;
+
 /**
  *
  * Created by Andrew on 07.05.2015.
  */
-public class LogcatWriter implements LogWriter
+public final class LogcatWriter implements LogWriter
 {
+    private static final LogcatWriter instance = new LogcatWriter();
+
+    @NonNull
+    public static LogcatWriter getInstance()
+    {
+        return instance;
+    }
+
+    private LogcatWriter()
+    {
+
+    }
+
     @Override
     public void write(int logLevel, String tag, String message, Throwable tr)
     {
