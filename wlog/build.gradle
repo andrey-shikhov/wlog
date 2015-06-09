@@ -11,14 +11,17 @@ android {
         versionName "1.0"
     }
     buildTypes {
+        debug {
+            proguardFiles 'proguard.txt'
+        }
+
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            minifyEnabled false
+            proguardFiles 'proguard.txt'
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:22.0.0'
+    compile 'com.android.support:support-v4:22.2.0'
 }

@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            keyAlias 'wlog'
+            keyPassword 'wlogwlog'
+            storeFile file('keys/wlog.keystore.jks')
+            storePassword 'android'
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "22.0.0"
-
     defaultConfig {
         applicationId "me.shikhov.wlogtest"
         minSdkVersion 16
@@ -13,14 +20,20 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
-    compile project(':wlog')
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile(name:'wlogrelease', ext:'aar')
+}
+
+repositories{
+    flatDir{
+        dirs 'libs'
+    }
 }

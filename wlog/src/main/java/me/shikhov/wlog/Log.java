@@ -202,6 +202,11 @@ public class Log
 
     private static LogWriter GLOBAL_LOGWRITER = LogcatWriter.getInstance();
 
+    /**
+     * Sets up log writer which will be used in Log instances.<br/>
+     * Previously created Log objects will not be changed.
+     * @param logWriter
+     */
     public static void setGlobalLogWriter(@NonNull LogWriter logWriter)
     {
         Log.GLOBAL_LOGWRITER = logWriter;
@@ -267,10 +272,7 @@ public class Log
      */
     public void r()
     {
-        if(builder.length() > 0)
-        {
-            builder.setLength(0);
-        }
+        f();
 
         stringBuildersProvider.releaseStringBuilder(builder);
 
@@ -315,6 +317,12 @@ public class Log
         return t(throwable);
     }
 
+    /**
+     * Logs event of object,
+     * @param object
+     * @param event
+     * @return
+     */
     public Log event(@NonNull Object object, @NonNull String event)
     {
         builder.append(object.getClass().getSimpleName()).append("@").append(object.hashCode()).append(" ")

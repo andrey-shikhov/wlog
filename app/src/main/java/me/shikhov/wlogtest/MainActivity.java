@@ -1,14 +1,12 @@
 package me.shikhov.wlogtest;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import me.shikhov.wlog.Log;
 
 
-public class MainActivity extends ActionBarActivity
+public class MainActivity extends Activity
 {
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -25,27 +23,26 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
+    protected void onResume()
     {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        super.onResume();
+        Log.get(TAG).event(this, "onResume")
+                .f()
+                .a(new Integer[]{1,2,3,4,5})
+                .release();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
+    protected void onPause()
     {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        super.onPause();
+        Log.get(TAG).event(this, "onPause").release();
+    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings)
-        {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        Log.get(TAG).event(this, "onDestroy").release();
     }
 }

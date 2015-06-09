@@ -84,7 +84,6 @@ public class ArrayFormatter
             builder.append(formatter.format[ITEM_SUFFIX]);
         }
 
-        builder.append(formatter.format[ITEM_SUFFIX]);
         builder.append(array[array.length - 1]);
         builder.append(formatter.format[LAST_ITEM_SUFFIX]);
 
