@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="wlogrelease-">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/wlogrelease/res" />
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/wlogrelease/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
