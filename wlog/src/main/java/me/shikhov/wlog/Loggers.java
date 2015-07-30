@@ -14,7 +14,7 @@ class Loggers
     private static final Map<Integer, Log> loggersMap = new HashMap<>();
 
     @NonNull
-    static Log getLogger(@NonNull String tag)
+    static Log getLogger()
     {
         int threadId = android.os.Process.myTid();
 
@@ -22,17 +22,22 @@ class Loggers
 
         if(logger == null)
         {
-            logger = new Log(tag);
+            logger = new Log("LOG");
 
             synchronized (mutex)
             {
                 loggersMap.put(threadId, logger);
             }
         }
-        else
-        {
-            logger.setTag(tag);
-        }
+
+        return logger;
+    }
+
+    @NonNull
+    static Log getLogger(@NonNull String tag)
+    {
+        Log logger = getLogger();
+        logger.setTag(tag);
 
         return logger;
     }

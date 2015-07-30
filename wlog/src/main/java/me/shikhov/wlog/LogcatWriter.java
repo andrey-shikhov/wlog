@@ -26,7 +26,21 @@ public final class LogcatWriter implements LogWriter
     {
         if(tr == null)
         {
-            android.util.Log.println(logLevel, tag, message);
+            if(message.length() > 4000)
+            {
+                int count = message.length()/4000;
+
+                for(int i = 0; i < count; i++)
+                {
+                    android.util.Log.println(logLevel, tag, message.substring(i*4000,(i+1)*4000));
+                }
+
+                android.util.Log.println(logLevel, tag, message.substring(count*4000));
+            }
+            else
+            {
+                android.util.Log.println(logLevel, tag, message);
+            }
         }
         else
         {

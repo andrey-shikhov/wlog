@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
  * "Without loss of generality"
  * Created by Andrew on 06.05.2015.
  */
+@SuppressWarnings("unused")
 public class Log
 {
     //region logLevel constants
@@ -229,6 +230,12 @@ public class Log
         return Loggers.getLogger(tag);
     }
 
+    @NonNull
+    public static Log get()
+    {
+        return Loggers.getLogger();
+    }
+
     private String tag;
 
     private final StringBuilder builder;
@@ -318,15 +325,22 @@ public class Log
     }
 
     /**
-     * Logs event of object,
+     * Special case log:<br/>
+     * [simpleclassname@hash event]<br/>
+     * For example: MainActivity@4fad3412 onCreate<br/>
+     * Convenient way to log lifecycle of object(activity,fragment, etc)
      * @param object
+     *          object to log
      * @param event
+     *          event raised by object
      * @return
+     *          this log object
      */
     public Log event(@NonNull Object object, @NonNull String event)
     {
-        builder.append(object.getClass().getSimpleName()).append("@").append(object.hashCode()).append(" ")
-                .append(event);
+        builder.append(object.getClass().getSimpleName())
+                .append("@").append(object.hashCode())
+                .append(" ").append(event);
 
         return this;
     }
@@ -344,14 +358,6 @@ public class Log
 
         if(builder.length() > 0)
         {
-            if(throwableToLog != null)
-            {
-                builder.append("\n");
-                builder.append(getStackTraceString(throwableToLog));
-
-                throwableToLog = null;
-            }
-
             message = builder.toString();
         }
         else
@@ -359,7 +365,12 @@ public class Log
             message = "";
         }
 
-        logWriter.write(logLevel, tag, message, throwableToLog);
+        if(message.length() > 0 || throwableToLog != null)
+        {
+            logWriter.write(logLevel, tag, message, throwableToLog);
+
+            throwableToLog = null;
+        }
 
         if(builder.length() > 0)
         {
@@ -555,18 +566,14 @@ public class Log
 
     public Log i()
     {
-//        logWriter.i(tag, builder.toString());
-
-        builder.delete(0, builder.length());
-
+        logLevel = android.util.Log.INFO;
         return this;
     }
 
     @NonNull
     public Log info()
     {
-        logLevel = android.util.Log.INFO;
-        return this;
+        return i();
     }
 
     @NonNull
@@ -575,6 +582,7 @@ public class Log
         return d();
     }
 
+    @NonNull
     public Log d()
     {
         logLevel = android.util.Log.DEBUG;

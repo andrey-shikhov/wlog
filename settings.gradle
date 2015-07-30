@@ -1,1 +1,1 @@
-include ':app', ':wlog'
+include ':wlog',':app'
