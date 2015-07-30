@@ -1,5 +1,29 @@
 apply plugin: 'com.android.library'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'wlog'
+
+    publishedGroupId = 'me.shikhov'
+    libraryName = 'wlog'
+    artifact = 'wlog'
+
+    libraryDescription = 'Ultimate replacement for android log with release build without logs in mind and reduced garbage generation'
+
+    siteUrl = 'https://github.com/andrey-shikhov/wlog'
+    gitUrl = 'https://github.com/andrey-shikhov/wlog.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'andrey-shikhov'
+    developerName = 'Andrew Shikhov'
+    developerEmail = 'andrew@shikhov.me'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
