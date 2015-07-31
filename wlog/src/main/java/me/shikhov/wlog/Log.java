@@ -1,11 +1,26 @@
+/*******************************************************************************
+ * Copyright 2015 Andrew Shikhov.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
 package me.shikhov.wlog;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
+ * Main class
  * "Without loss of generality"
- * Created by Andrew on 06.05.2015.
  */
 @SuppressWarnings("unused")
 public class Log
@@ -14,43 +29,44 @@ public class Log
     /**
      * Priority constant for the println method; use Log.v.
      */
-    public static final int VERBOSE = 2;
+    public static final int VERBOSE = android.util.Log.VERBOSE;
 
     /**
      * Priority constant for the println method; use Log.d.
      */
-    public static final int DEBUG = 3;
+    public static final int DEBUG = android.util.Log.DEBUG;
 
     /**
      * Priority constant for the println method; use Log.i.
      */
-    public static final int INFO = 4;
+    public static final int INFO = android.util.Log.INFO;
 
     /**
      * Priority constant for the println method; use Log.w.
      */
-    public static final int WARN = 5;
+    public static final int WARN = android.util.Log.WARN;
 
     /**
      * Priority constant for the println method; use Log.e.
      */
-    public static final int ERROR = 6;
+    public static final int ERROR = android.util.Log.ERROR;
 
     /**
      * Priority constant for the println method.
      */
-    public static final int ASSERT = 7;
+    public static final int ASSERT = android.util.Log.ASSERT;
     //endregion
 
     //region legacy migration methods equals to android.util.Log
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
+     * <b>LEGACY, FOR MIGRATION PURPOSES</b>
      * Send a {@link #VERBOSE} log message.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
+     * @deprecated
      */
+    @Deprecated
     public static int v(String tag, String msg) {
         return println(VERBOSE, tag, msg);
     }
@@ -64,6 +80,7 @@ public class Log
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
+    @Deprecated
     public static int v(String tag, String msg, Throwable tr) {
         return println(VERBOSE, tag, msg + '\n' + getStackTraceString(tr));
     }
@@ -76,6 +93,7 @@ public class Log
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
+    @Deprecated
     public static int d(String tag, String msg) {
         return println(DEBUG, tag, msg);
     }
@@ -89,6 +107,7 @@ public class Log
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
+    @Deprecated
     public static int d(String tag, String msg, Throwable tr) {
         return println(DEBUG, tag, msg + '\n' + getStackTraceString(tr));
     }
@@ -101,6 +120,7 @@ public class Log
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
+    @Deprecated
     public static int i(String tag, String msg) {
         return println(INFO, tag, msg);
     }
@@ -114,6 +134,7 @@ public class Log
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
+    @Deprecated
     public static int i(String tag, String msg, Throwable tr) {
         return println(INFO, tag, msg + '\n' + getStackTraceString(tr));
     }
@@ -126,6 +147,7 @@ public class Log
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
+    @Deprecated
     public static int w(String tag, String msg) {
         return println(WARN, tag, msg);
     }
@@ -139,6 +161,7 @@ public class Log
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
+    @Deprecated
     public static int w(String tag, String msg, Throwable tr) {
         return println(WARN, tag, msg + '\n' + getStackTraceString(tr));
     }
@@ -151,6 +174,7 @@ public class Log
      *        the class or activity where the log call occurs.
      * @param tr An exception to log
      */
+    @Deprecated
     public static int w(String tag, Throwable tr) {
         return println(WARN, tag, getStackTraceString(tr));
     }
@@ -163,6 +187,7 @@ public class Log
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
+    @Deprecated
     public static int e(String tag, String msg) {
         return println(ERROR, tag, msg);
     }
@@ -176,6 +201,7 @@ public class Log
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
+    @Deprecated
     public static int e(String tag, String msg, Throwable tr) {
         return println(ERROR, tag, msg + '\n' + getStackTraceString(tr));
     }
@@ -184,6 +210,7 @@ public class Log
      * Handy function to get a loggable stack trace from a Throwable
      * @param tr An exception to log
      */
+    @Deprecated
     public static String getStackTraceString(Throwable tr) {
         return android.util.Log.getStackTraceString(tr);
     }
@@ -196,6 +223,7 @@ public class Log
      * @param msg The message you would like logged.
      * @return The number of bytes written.
      */
+    @Deprecated
     public static int println(int priority, String tag, String msg) {
         return android.util.Log.println(priority, tag, msg);
     }
@@ -204,7 +232,7 @@ public class Log
     private static LogWriter GLOBAL_LOGWRITER = LogcatWriter.getInstance();
 
     /**
-     * Sets up log writer which will be used in Log instances.<br/>
+     * Sets up log writer which will be used in Log instances.<br>
      * Previously created Log objects will not be changed.
      * @param logWriter
      */
@@ -217,8 +245,8 @@ public class Log
     private static final StringBuildersProvider stringBuildersProvider = new StringBuildersProvider();
 
     /**
-     * The only way to receive log object.<br/>
-     * This method is thread safe.<br/>
+     * The only way to receive log object.<br>
+     * This method is thread safe.<br>
      * In case of calling this method from the thread which is already has active(not released) Log object
      * then that object returned with changed tag, previous pushed data will be automatically flushed.
      * @param tag tag for log object
@@ -319,15 +347,16 @@ public class Log
      * @param throwable throwable to log
      * @return this Log object
      */
+    @NonNull
     public Log throwable(@NonNull Throwable throwable)
     {
         return t(throwable);
     }
 
     /**
-     * Special case log:<br/>
-     * [simpleclassname@hash event]<br/>
-     * For example: MainActivity@4fad3412 onCreate<br/>
+     * Special case log:<br>
+     * [simpleclassname@hash event]<br>
+     * For example: MainActivity@4fad3412 onCreate<br>
      * Convenient way to log lifecycle of object(activity,fragment, etc)
      * @param object
      *          object to log
@@ -336,6 +365,7 @@ public class Log
      * @return
      *          this log object
      */
+    @NonNull
     public Log event(@NonNull Object object, @NonNull String event)
     {
         builder.append(object.getClass().getSimpleName())
@@ -346,7 +376,7 @@ public class Log
     }
 
     /**
-     * Shortcut for {@link #flush()} method. <br/>
+     * Shortcut for {@link #flush()} method. <br>
      * Flushes data to logWriter.
      * @see #flush()
      * @return this object.
@@ -396,12 +426,28 @@ public class Log
     }
 
     //region append methods
+
+    /**
+     * Appends boolean value to current log statement
+     * @param value
+     *      value to log
+     * @return
+     *      this object
+     * @see #a(boolean)
+     */
     @NonNull
     public Log append(boolean value)
     {
         return a(value);
     }
 
+    /**
+     * Appends boolean value to current log statement
+     * @param value
+     *      boolean value to log
+     * @return
+     *      this object
+     */
     @NonNull
     public Log a(boolean value)
     {
@@ -410,68 +456,149 @@ public class Log
         return this;
     }
 
+    /**
+     * Appends char value to current log statement
+     * @param value
+     *      char value to log
+     * @return
+     *      this object
+     * @see #a(char)
+     */
     @NonNull
     public Log append(char value)
     {
         return a(value);
     }
 
-    @NonNull Log a(char value)
+    /**
+     * Appends char value to current log statement
+     * @param value
+     *      char value to log
+     * @return
+     *      this object
+     */
+    @NonNull
+    public Log a(char value)
     {
         checkDisposed();
         builder.append(value);
         return this;
     }
 
+    /**
+     * Appends long value to current log statement
+     * @param value
+     *      long value to log
+     * @return
+     *      this object
+     * @see #a(long)
+     */
     @NonNull
     public Log append(long value)
     {
         return a(value);
     }
 
-    @NonNull Log a(long value)
+    /**
+     * Appends long value to current log statement
+     * @param value
+     *      long value to log
+     * @return
+     *      this object
+     * @see #a(long)
+     */
+    @NonNull
+    public Log a(long value)
     {
         checkDisposed();
         builder.append(value);
         return this;
     }
 
+    /**
+     * Appends float value to current log statement
+     * @param value
+     *      float value to log
+     * @return
+     *      this object
+     * @see #a(float)
+     */
     @NonNull
     public Log append(float value)
     {
         return a(value);
     }
 
-    @NonNull Log a(float value)
+    /**
+     * Appends float value to current log statement
+     * @param value
+     *      float value to log
+     * @return
+     *      this object
+     */
+    @NonNull
+    public Log a(float value)
     {
         checkDisposed();
         builder.append(value);
         return this;
     }
 
+    /**
+     * Appends double value to current log statement
+     * @param value
+     *      double value to log
+     * @return
+     *      this object
+     * @see #a(double)
+     */
     @NonNull
     public Log append(double value)
     {
         return a(value);
     }
 
-    @NonNull Log a(double value)
+    /**
+     * Appends double value to current log statement
+     * @param value
+     *      double value to log
+     * @return
+     *      this object
+     */
+    @NonNull
+    public Log a(double value)
     {
         checkDisposed();
         builder.append(value);
         return this;
     }
 
+    /**
+     * Appends char[] value to current log statement
+     * @param value
+     *      char[] value to log, can be null
+     * @return
+     *      this object
+     * @see #a(char[])
+     */
     @NonNull
-    public Log append(char[] value)
+    public Log append(@Nullable char[] value)
     {
         return a(value);
     }
 
-    @NonNull Log a(char[] value)
+    /**
+     * Appends char[] value to current log statement
+     * @param value
+     *      char[] value to log, can be null
+     * @return
+     *      this object
+     */
+    @NonNull
+    public Log a(@Nullable char[] value)
     {
         checkDisposed();
-        builder.append(value);
+        builder.append(value == null ? "null" : value);
         return this;
     }
 
@@ -510,12 +637,28 @@ public class Log
         return this;
     }
 
+    /**
+     * Appends {@code Object#toString} to current log statement
+     * @param object
+     *      object to log, can be null
+     * @return
+     *      this object
+     * @see #a(Object)
+     */
     @NonNull
     public Log append(@Nullable Object object)
     {
         return a(object);
     }
 
+    /**
+     * Appends {@code Object#toString} to current log statement
+     * @param object
+     *      object to log, can be null
+     * @return
+     *      this object
+     */
+    @NonNull
     public Log a(@Nullable Object object)
     {
         checkDisposed();
@@ -525,12 +668,24 @@ public class Log
     }
 
     @NonNull
+    public Log append(@NonNull String string)
+    {
+        return a(string);
+    }
+
+    @NonNull
     public Log a(@NonNull String string)
     {
         checkDisposed();
         builder.append(string);
 
         return this;
+    }
+
+    @NonNull
+    public Log append(@Nullable Object[] array)
+    {
+        return a(array);
     }
 
     @NonNull
@@ -559,11 +714,20 @@ public class Log
         }
     }
 
+    /**
+     * Shortcut to {@link #a(String)}.{@link #i()}<br>
+     * Logs string and set logLevel to INFO
+     * @param string
+     *      string to log
+     * @return
+     *      this object
+     */
     public Log i(@NonNull String string)
     {
         return a(string).i();
     }
 
+    @NonNull
     public Log i()
     {
         logLevel = android.util.Log.INFO;
@@ -595,6 +759,7 @@ public class Log
         return w();
     }
 
+    @NonNull
     public Log w()
     {
         logLevel = android.util.Log.WARN;

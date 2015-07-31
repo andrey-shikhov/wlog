@@ -29,7 +29,7 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:22.2.1'
-    compile project(':wlog')
+    compile 'me.shikhov:wlog:1.0.0'
 }
 
 repositories{

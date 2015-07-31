@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/andrey-shikhov/wlog'
     gitUrl = 'https://github.com/andrey-shikhov/wlog.git'
 
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.0.1'
 
     developerId = 'andrey-shikhov'
     developerName = 'Andrew Shikhov'
@@ -27,6 +27,10 @@ ext {
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
+
+    configurations {
+        javadocDeps
+    }
 
     defaultConfig {
         minSdkVersion 7
@@ -47,4 +51,8 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:22.2.1'
+    javadocDeps 'com.android.support:support-annotations:22.2.1'
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
