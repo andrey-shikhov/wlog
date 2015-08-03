@@ -1,6 +1,8 @@
-[ ![Download](https://api.bintray.com/packages/andrey-shikhov/maven/wlog/images/download.svg) ](https://bintray.com/andrey-shikhov/maven/wlog/_latestVersion)
-
 # wlog
+[ ![jcenter](https://api.bintray.com/packages/andrey-shikhov/maven/wlog/images/download.svg) ](https://bintray.com/andrey-shikhov/maven/wlog/_latestVersion)
+[ ![mavenCentral](https://maven-badges.herokuapp.com/maven-central/me.shikhov/wlog/badge.png)
+](http://search.maven.org/#artifactdetails%7Cme.shikhov%7Cwlog%7C1.0.1%7Caar)
+
 Ultimate replacement for android android.util.Log class, no proguard leftovers, convenient way to log basic types, arrays, exceptions
 
 # Why to use wlog instead of built in log?
