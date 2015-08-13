@@ -29,6 +29,7 @@ public class ArrayFormatter
               " ",
               ",",
               "",
+              "",
               "]",
               null
             };
@@ -44,18 +45,20 @@ public class ArrayFormatter
     public static final int PREFIX = 0;
     public static final int ITEM_PREFIX = 1;
     public static final int ITEM_SUFFIX = 2;
-    public static final int LAST_ITEM_SUFFIX = 3;
-    public static final int SUFFIX = 4;
-    public static final int EMPTY_ARRAY = 5;
+    public static final int FIRST_ITEM_PREFIX = 3;
+    public static final int LAST_ITEM_SUFFIX = 4;
+    public static final int SUFFIX = 5;
+    public static final int EMPTY_ARRAY = 6;
 
     private final String[] format;
 
     private ArrayFormatter(@NonNull Builder builder)
     {
-        format = new String[6];
+        format = new String[DEFAULT_FORMAT.length];
         format[PREFIX] = builder.prefix;
         format[ITEM_PREFIX] = builder.itemPrefix;
         format[ITEM_SUFFIX] = builder.itemSuffix;
+        format[FIRST_ITEM_PREFIX] = builder.firstItemPrefix;
         format[LAST_ITEM_SUFFIX] = builder.lastItemSuffix;
         format[SUFFIX] = builder.suffix;
         format[EMPTY_ARRAY] = builder.emptyArray;
@@ -66,7 +69,8 @@ public class ArrayFormatter
         this.format = DEFAULT_FORMAT;
     }
 
-    public static void format(@NonNull ArrayFormatter formatter, @NonNull StringBuilder builder, @Nullable Object[] array)
+
+    public static <T> void format(@NonNull ArrayFormatter formatter, @NonNull StringBuilder builder, @Nullable T[] array)
     {
         if(array == null)
         {
@@ -91,14 +95,22 @@ public class ArrayFormatter
 
         builder.append(formatter.format[PREFIX]);
 
-        for(int i = 0; i < array.length - 1; i++)
+        builder.append(formatter.format[FIRST_ITEM_PREFIX]);
+
+        builder.append(array[0]);
+
+        for(int i = 1; i < array.length - 1; i++)
         {
             builder.append(formatter.format[ITEM_PREFIX]);
             builder.append(array[i]);
             builder.append(formatter.format[ITEM_SUFFIX]);
         }
 
-        builder.append(array[array.length - 1]);
+        if(array.length > 1)
+        {
+            builder.append(array[array.length - 1]);
+        }
+
         builder.append(formatter.format[LAST_ITEM_SUFFIX]);
 
         builder.append(formatter.format[SUFFIX]);
@@ -106,12 +118,13 @@ public class ArrayFormatter
 
     public static class Builder
     {
-        private String prefix = "[";
-        private String suffix = "]";
-        private String itemPrefix = "";
-        private String itemSuffix = "";
-        private String lastItemSuffix = "";
-        private String emptyArray = null;
+        private String prefix = DEFAULT_FORMAT[PREFIX];
+        private String suffix = DEFAULT_FORMAT[SUFFIX];
+        private String itemPrefix = DEFAULT_FORMAT[ITEM_PREFIX];
+        private String itemSuffix = DEFAULT_FORMAT[ITEM_SUFFIX];
+        private String firstItemPrefix = DEFAULT_FORMAT[FIRST_ITEM_PREFIX];
+        private String lastItemSuffix = DEFAULT_FORMAT[LAST_ITEM_SUFFIX];
+        private String emptyArray = DEFAULT_FORMAT[EMPTY_ARRAY];
 
         private Builder()
         {
@@ -149,6 +162,13 @@ public class ArrayFormatter
         public Builder setItemSuffix(@NonNull String itemSuffix)
         {
             this.itemSuffix = itemSuffix;
+            return this;
+        }
+
+        @NonNull
+        public Builder setFirstItemPreffix(@NonNull String firstItemPreffix)
+        {
+            this.firstItemPrefix = firstItemPreffix;
             return this;
         }
 

@@ -16,21 +16,23 @@ Ultimate replacement for android android.util.Log class, no proguard leftovers, 
 # Migration
 For the sake of the smooth migration, there are all the methods of the original Log class such as 
 `Log.d(tag, message,  throwable)` 
-and so on. So, for quick migration replace all `import android.util.Log;` to `import me.shikhov.wlog.Log;` and all must work as before. But remember this is just legacy methods and they must be replaced with more appropriate ones.
+and so on. So, for quick migration replace all `import android.util.Log;` to `import me.shikhov.wlog.Log;` and all must work as before.
+But remember if string concatenation is used in such methods it should be replaced with `append()` or 'a()' calls
 
 # Installation
 Library is in `jcenter` and `mavenCentral` repositories, so you only need to declare it in dependencies in your `build.gradle`
 ```
 dependencies {
-    compile 'me.shikhov:wlog:1.0.0'
+    compile 'me.shikhov:wlog:1.1.0'
 }
 ```
 
 # Intoduction
-1. Log object reference can be received by calling `Log.get("TAG")`
+1. Log object reference can be received by calling `Log.get("TAG")` or 'Log.get()'
 2. Log object can be recycled by calling `release()` or `r()` method
 3. Log object can't be used after `release()` call, this will produce IllegalStateException
 4. For most types use overloaded `append()` method, or `a()` to decrease length of statement.
+5. To set different logLevel, call `verbose()`,`debug()`,`info()`,`warn()`, `error()` methods or their shortcuts `v()`,`d()`,`i()`,`w()`,`e()`
 5. Call `flush()` or `f()` method to flush data to the log output(default is logcat)
 6. `flush()` is not mandatory if `release()` method called.
 

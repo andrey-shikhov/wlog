@@ -57,160 +57,139 @@ public class Log
     public static final int ASSERT = android.util.Log.ASSERT;
     //endregion
 
-    //region legacy migration methods equals to android.util.Log
+    //region shortcut methods to log simple string/throwable statements
     /**
-     * <b>LEGACY, FOR MIGRATION PURPOSES</b>
      * Send a {@link #VERBOSE} log message.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
-     * @deprecated
      */
-    @Deprecated
-    public static int v(String tag, String msg) {
-        return println(VERBOSE, tag, msg);
+
+    public static void v(String tag, String msg)
+    {
+        get(tag).a(msg).v().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send a {@link #VERBOSE} log message and log the exception.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    @Deprecated
-    public static int v(String tag, String msg, Throwable tr) {
-        return println(VERBOSE, tag, msg + '\n' + getStackTraceString(tr));
+    public static void v(String tag, String msg, Throwable tr)
+    {
+        get(tag).a(msg).t(tr).v().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send a {@link #DEBUG} log message.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    @Deprecated
-    public static int d(String tag, String msg) {
-        return println(DEBUG, tag, msg);
+    public static void d(String tag, String msg)
+    {
+        get(tag).a(msg).d().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send a {@link #DEBUG} log message and log the exception.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    @Deprecated
-    public static int d(String tag, String msg, Throwable tr) {
-        return println(DEBUG, tag, msg + '\n' + getStackTraceString(tr));
+    public static void d(String tag, String msg, Throwable tr)
+    {
+        get(tag).a(msg).t(tr).d().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send an {@link #INFO} log message.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    @Deprecated
-    public static int i(String tag, String msg) {
-        return println(INFO, tag, msg);
+    public static void i(String tag, String msg)
+    {
+        get(tag).a(msg).i().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send a {@link #INFO} log message and log the exception.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    @Deprecated
-    public static int i(String tag, String msg, Throwable tr) {
-        return println(INFO, tag, msg + '\n' + getStackTraceString(tr));
+    public static void i(String tag, String msg, Throwable tr)
+    {
+        get(tag).a(msg).t(tr).i().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send a {@link #WARN} log message.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    @Deprecated
-    public static int w(String tag, String msg) {
-        return println(WARN, tag, msg);
+    public static void w(String tag, String msg)
+    {
+        get(tag).a(msg).w().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send a {@link #WARN} log message and log the exception.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    @Deprecated
-    public static int w(String tag, String msg, Throwable tr) {
-        return println(WARN, tag, msg + '\n' + getStackTraceString(tr));
+    public static void w(String tag, String msg, Throwable tr)
+    {
+        get(tag).a(msg).t(tr).w().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send a {@link #WARN} log message and log the exception.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param tr An exception to log
      */
-    @Deprecated
-    public static int w(String tag, Throwable tr) {
-        return println(WARN, tag, getStackTraceString(tr));
+    public static void w(String tag, Throwable tr)
+    {
+        get(tag).t(tr).w().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send an {@link #ERROR} log message.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    @Deprecated
-    public static int e(String tag, String msg) {
-        return println(ERROR, tag, msg);
+
+    public static void e(String tag, String msg)
+    {
+        get(tag).a(msg).e().r();
     }
 
     /**
-     * Method added for easier log migration, signatures identical to android sdk Log class
-     * _____________________________________
      * Send a {@link #ERROR} log message and log the exception.
      * @param tag Used to identify the source of a log message.  It usually identifies
      *        the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    @Deprecated
-    public static int e(String tag, String msg, Throwable tr) {
-        return println(ERROR, tag, msg + '\n' + getStackTraceString(tr));
+    public static void e(String tag, String msg, Throwable tr)
+    {
+        get(tag).a(msg).t(tr).e().r();
     }
 
     /**
      * Handy function to get a loggable stack trace from a Throwable
      * @param tr An exception to log
      */
-    @Deprecated
     public static String getStackTraceString(Throwable tr) {
         return android.util.Log.getStackTraceString(tr);
     }
@@ -231,14 +210,58 @@ public class Log
 
     private static LogWriter GLOBAL_LOGWRITER = LogcatWriter.getInstance();
 
+    private static int DEFAULT_LOG_LEVEL = DEBUG;
+
+    static
+    {
+        String logLevel = System.getProperty("wlog.logLevel");
+
+        if(logLevel != null)
+        {
+            android.util.Log.println(android.util.Log.INFO, "wlog", "logLevel: " + logLevel);
+
+            if(logLevel.equals("verbose"))
+            {
+                DEFAULT_LOG_LEVEL = VERBOSE;
+            }
+            else
+            {
+                if(logLevel.equals("debug"))
+                {
+                    DEFAULT_LOG_LEVEL = DEBUG;
+                }
+                else
+                {
+                    if(logLevel.equals("info"))
+                    {
+                        DEFAULT_LOG_LEVEL = INFO;
+                    }
+                    else
+                    {
+                        if(logLevel.equals("error"))
+                        {
+                            DEFAULT_LOG_LEVEL = ERROR;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Sets up log writer which will be used in Log instances.<br>
      * Previously created Log objects will not be changed.
      * @param logWriter
+     *      new logWriter to replace current writer, default is {@link LogcatWriter}
      */
     public static void setGlobalLogWriter(@NonNull LogWriter logWriter)
     {
         Log.GLOBAL_LOGWRITER = logWriter;
+    }
+
+    public static void setDefaultLogLevel(int logLevel)
+    {
+        DEFAULT_LOG_LEVEL = logLevel;
     }
 
     @NonNull
@@ -264,13 +287,13 @@ public class Log
         return Loggers.getLogger();
     }
 
-    private String tag;
-
     private final StringBuilder builder;
 
-    private LogWriter logWriter = GLOBAL_LOGWRITER;
+    private String tag;
 
-    private int logLevel = android.util.Log.DEBUG;
+    private LogWriter logWriter;
+
+    private int logLevel;
 
     private Throwable throwableToLog;
 
@@ -281,11 +304,13 @@ public class Log
         this.builder = stringBuildersProvider.acqireStringBuilder();
         this.logWriter = GLOBAL_LOGWRITER;
         this.tag = tag;
+        logLevel = DEFAULT_LOG_LEVEL;
     }
 
     /**
      * @see LogcatWriter
      * @param logWriter
+     *      log writer, responsible for actual log output
      */
     public void setLogWriter(@NonNull LogWriter logWriter)
     {
@@ -683,13 +708,13 @@ public class Log
     }
 
     @NonNull
-    public Log append(@Nullable Object[] array)
+    public <T> Log append(@Nullable T[] array)
     {
         return a(array);
     }
 
     @NonNull
-    public Log a(@Nullable Object[] array)
+    public <T> Log a(@Nullable T[] array)
     {
         checkDisposed();
         if(array == null)
@@ -703,6 +728,59 @@ public class Log
         return this;
     }
 
+    /**
+     * Appends array of objects with specified ArrayFormatter
+     * @param array
+     *      array of objects
+     * @param formatter {@link ArrayFormatter}
+     * @param <T> any type allowed
+     * @return
+     *      this object
+     */
+    @NonNull
+    public <T> Log a(@Nullable T[] array, @NonNull ArrayFormatter formatter)
+    {
+        checkDisposed();
+        if(array == null)
+            builder.append("null");
+        else
+        {
+            ArrayFormatter.format(formatter,
+                    builder, array);
+        }
+
+        return this;
+    }
+
+
+    /**
+     * Adds simplified class name to log statement, <b>not Object itself!</b><br>
+     * NOTE: anonymous classes should override {@code toString()} method which should return
+     * recognizable string
+     * @param object
+     *      object which class name will be logged
+     * @return
+     *      this object
+     */
+    @NonNull
+    public Log c(@NonNull Object object)
+    {
+        Class klass = object.getClass();
+
+        String className = klass.getSimpleName();
+
+        if(className.length() == 0)
+            className = klass.toString();
+
+        if(className.indexOf('$') != -1)
+        {
+            className = object.toString();
+            className = className.substring(className.lastIndexOf('.') + 1);
+        }
+
+        return a(className);
+    }
+
     //endregion
 
 
@@ -712,6 +790,52 @@ public class Log
         {
             throw new IllegalStateException("Log " + tag + " is disposed, usage after release() call is prohibited");
         }
+    }
+
+    /**
+     * Changes current logLevel to {@link #VERBOSE}
+     * @return
+     *      this object
+     */
+    public Log verbose()
+    {
+        return v();
+    }
+
+    /**
+     * Changes current logLevel to {@link #VERBOSE}
+     * @return
+     *      this object
+     */
+    public Log v()
+    {
+        logLevel = VERBOSE;
+        return this;
+    }
+
+    @NonNull
+    public Log debug()
+    {
+        return d();
+    }
+
+    @NonNull
+    public Log d()
+    {
+        logLevel = android.util.Log.DEBUG;
+        return this;
+    }
+
+    @NonNull
+    public Log d(String msg)
+    {
+        return a(msg).d();
+    }
+
+    @NonNull
+    public Log info()
+    {
+        return i();
     }
 
     /**
@@ -734,24 +858,6 @@ public class Log
         return this;
     }
 
-    @NonNull
-    public Log info()
-    {
-        return i();
-    }
-
-    @NonNull
-    public Log debug()
-    {
-        return d();
-    }
-
-    @NonNull
-    public Log d()
-    {
-        logLevel = android.util.Log.DEBUG;
-        return this;
-    }
 
     @NonNull
     public Log warn()
@@ -765,4 +871,24 @@ public class Log
         logLevel = android.util.Log.WARN;
         return this;
     }
+
+    @NonNull
+    public Log error()
+    {
+        return e();
+    }
+
+    @NonNull
+    public Log e()
+    {
+        logLevel = ERROR;
+        return this;
+    }
+
+    @NonNull
+    public Log e(String msg)
+    {
+        return a(msg).e();
+    }
+
 }
