@@ -18,6 +18,9 @@ package me.shikhov.wlog;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * Main class
  * "Without loss of generality"
@@ -212,6 +215,8 @@ public class Log
 
     private static int DEFAULT_LOG_LEVEL = DEBUG;
 
+    private static String NEW_LINE = "\n";
+
     static
     {
         String logLevel = System.getProperty("wlog.logLevel");
@@ -245,6 +250,13 @@ public class Log
                     }
                 }
             }
+        }
+
+        String newLine = System.getProperty("wlog.newLine");
+
+        if(newLine != null)
+        {
+            NEW_LINE = newLine;
         }
     }
 
@@ -394,10 +406,38 @@ public class Log
     public Log event(@NonNull Object object, @NonNull String event)
     {
         builder.append(object.getClass().getSimpleName())
-                .append("@").append(object.hashCode())
+                .append("@").append(Integer.toString(object.hashCode(), 16))
                 .append(" ").append(event);
 
         return this;
+    }
+
+    /**
+     * Appends newLine sequence to current statement.<br>
+     *     newLine sequence can be configured at startup by setting system property
+     *     wlog.newLine, default value is \n
+     * @return
+     *      this object
+     */
+    @NonNull
+    public Log nl()
+    {
+        builder.append(NEW_LINE);
+
+        return this;
+    }
+
+    /**
+     * Appends newLine sequence to current statement.<br>
+     *     newLine sequence can be configured at startup by setting system property
+     *     wlog.newLine, default value is \n
+     * @return
+     *      this object
+     */
+    @NonNull
+    public Log newLine()
+    {
+        return nl();
     }
 
     /**
@@ -693,6 +733,42 @@ public class Log
     }
 
     @NonNull
+    public <T> Log a(@Nullable Collection<T> collection)
+    {
+        checkDisposed();
+
+        SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
+                builder,
+                collection);
+
+        return this;
+    }
+
+    @NonNull
+    public <T> Log append(@Nullable Collection<T> collection)
+    {
+        return a(collection);
+    }
+
+    @NonNull
+    public <T,V> Log a(@Nullable Map<T,V> map)
+    {
+        checkDisposed();
+
+        SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
+                builder,
+                map);
+
+        return this;
+    }
+
+    @NonNull
+    public <T,V> Log append(@Nullable Map<T,V> map)
+    {
+        return a(map);
+    }
+
+    @NonNull
     public Log append(@NonNull String string)
     {
         return a(string);
@@ -721,7 +797,7 @@ public class Log
             builder.append("null");
         else
         {
-            ArrayFormatter.format(ArrayFormatter.getDefaultFormatter(),
+            SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
                     builder, array);
         }
 
@@ -729,29 +805,28 @@ public class Log
     }
 
     /**
-     * Appends array of objects with specified ArrayFormatter
+     * Appends array of objects with specified SequenceFormatter
      * @param array
      *      array of objects
-     * @param formatter {@link ArrayFormatter}
+     * @param formatter {@link SequenceFormatter}
      * @param <T> any type allowed
      * @return
      *      this object
      */
     @NonNull
-    public <T> Log a(@Nullable T[] array, @NonNull ArrayFormatter formatter)
+    public <T> Log a(@Nullable T[] array, @NonNull SequenceFormatter formatter)
     {
         checkDisposed();
         if(array == null)
             builder.append("null");
         else
         {
-            ArrayFormatter.format(formatter,
+            SequenceFormatter.format(formatter,
                     builder, array);
         }
 
         return this;
     }
-
 
     /**
      * Adds simplified class name to log statement, <b>not Object itself!</b><br>

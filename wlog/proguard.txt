@@ -6,7 +6,7 @@
     public static <methods>;
 }
 
--assumenosideeffects class me.shikhov.wlog.ArrayFormatter {
+-assumenosideeffects class me.shikhov.wlog.SequenceFormatter {
     public <methods>;
     public static <methods>;
 }
