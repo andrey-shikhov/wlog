@@ -1,9 +1,9 @@
 # wlog
 [ ![jcenter](https://api.bintray.com/packages/andrey-shikhov/maven/wlog/images/download.svg) ](https://bintray.com/andrey-shikhov/maven/wlog/_latestVersion)
 [ ![mavenCentral](https://maven-badges.herokuapp.com/maven-central/me.shikhov/wlog/badge.png)
-](http://search.maven.org/#artifactdetails%7Cme.shikhov%7Cwlog%7C1.0.1%7Caar)
+](http://search.maven.org/#artifactdetails%7Cme.shikhov%7Cwlog%7C1.2.4%7Caar)
 
-Ultimate replacement for android android.util.Log class, no proguard leftovers, convenient way to log basic types, arrays, exceptions
+Ultimate enhancement of android android.util.Log class, no proguard leftovers, convenient way to log basic types, arrays, collections, exceptions and much more!
 
 # Why to use wlog instead of built in log?
 * No proguard leftovers(one rule to follow - no string concatenation, but using built in append() or a() methods)
@@ -15,15 +15,14 @@ Ultimate replacement for android android.util.Log class, no proguard leftovers, 
  
 # Migration
 For the sake of the smooth migration, there are all the methods of the original Log class such as 
-`Log.d(tag, message,  throwable)` 
-and so on. So, for quick migration replace all `import android.util.Log;` to `import me.shikhov.wlog.Log;` and all must work as before.
+`Log.d(tag, message,  throwable)` and so on.<br> So, for quick migration replace all `import android.util.Log;` to `import me.shikhov.wlog.Log;` and all must work as before.
 But remember if string concatenation is used in such methods it should be replaced with `append()` or 'a()' calls
 
 # Installation
 Library is in `jcenter` and `mavenCentral` repositories, so you only need to declare it in dependencies in your `build.gradle`
 ```
 dependencies {
-    compile 'me.shikhov:wlog:1.1.0'
+    compile 'me.shikhov:wlog:1.2.4'
 }
 ```
 
@@ -49,3 +48,19 @@ Log.get("TEST").a(value).a(",").a(array).release();
 When I thought about name,I decided to use log with one char prefix for simplicity.
 Some goals were to not intersect with already existed log libraries and to find some cool abbreviation which has meaning.
 I found it, and this is mathematical "without loss of generality", so I stopped here :)
+
+# License
+
+    Copyright 2015 Andrew Shikhov
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.

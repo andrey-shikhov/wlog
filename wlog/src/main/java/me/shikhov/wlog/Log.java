@@ -22,8 +22,11 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Main class
+ * Main entry for this library.
  * "Without loss of generality"
+ * @see #get(String)
+ * @see #r()
+ * @see #append(String)
  */
 @SuppressWarnings("unused")
 public class Log
@@ -192,7 +195,10 @@ public class Log
     /**
      * Handy function to get a loggable stack trace from a Throwable
      * @param tr An exception to log
+     * @return
+     *      String representation of stack trace
      */
+    @NonNull
     public static String getStackTraceString(Throwable tr) {
         return android.util.Log.getStackTraceString(tr);
     }
@@ -406,7 +412,7 @@ public class Log
     public Log event(@NonNull Object object, @NonNull String event)
     {
         builder.append(object.getClass().getSimpleName())
-                .append("@").append(Integer.toString(object.hashCode(), 16))
+                .append("@").append(Integer.toHexString(object.hashCode()))
                 .append(" ").append(event);
 
         return this;
@@ -422,9 +428,7 @@ public class Log
     @NonNull
     public Log nl()
     {
-        builder.append(NEW_LINE);
-
-        return this;
+        return a(NEW_LINE);
     }
 
     /**
@@ -859,6 +863,10 @@ public class Log
     //endregion
 
 
+    /**
+     * Checks if logger is disposed(underlying StringBuilder returned to pool) and prevents
+     * any manipulation if logger in this state by throwing IllegalStateException
+     */
     private void checkDisposed()
     {
         if(disposed)
@@ -888,12 +896,22 @@ public class Log
         return this;
     }
 
+    /**
+     * Sets logLvel to {@link #DEBUG} for current logger
+     * @return
+     *      this object
+     */
     @NonNull
     public Log debug()
     {
         return d();
     }
 
+    /**
+     * Sets logLevel to {@link #DEBUG} for current logger
+     * @return
+     *      this object
+     */
     @NonNull
     public Log d()
     {
@@ -901,12 +919,25 @@ public class Log
         return this;
     }
 
+    /**
+     * Adds string to current statement and changes logLevel to {@link #DEBUG}<br>
+     * Shortcut for a(msg).d()
+     * @param msg
+     *      message to log
+     * @return
+     *      this object
+     */
     @NonNull
     public Log d(String msg)
     {
         return a(msg).d();
     }
 
+    /**
+     * Sets logLevel to {@link #INFO} for current logger
+     * @return
+     *      this object
+     */
     @NonNull
     public Log info()
     {
@@ -914,8 +945,8 @@ public class Log
     }
 
     /**
-     * Shortcut to {@link #a(String)}.{@link #i()}<br>
      * Logs string and set logLevel to INFO
+     * Shortcut to {@link #a(String)}.{@link #i()}<br>
      * @param string
      *      string to log
      * @return
@@ -926,6 +957,11 @@ public class Log
         return a(string).i();
     }
 
+    /**
+     * Sets logLevel to {@link #INFO} for current logger
+     * @return
+     *      this object
+     */
     @NonNull
     public Log i()
     {
@@ -934,12 +970,22 @@ public class Log
     }
 
 
+    /**
+     * Sets logLevel to {@link #WARN} for current logger
+     * @return
+     *      this object
+     */
     @NonNull
     public Log warn()
     {
         return w();
     }
 
+    /**
+     * Sets logLevel to {@link #WARN} for current logger
+     * @return
+     *      this object
+     */
     @NonNull
     public Log w()
     {
@@ -947,12 +993,22 @@ public class Log
         return this;
     }
 
+    /**
+     * Sets logLevel to {@link #ERROR} for current logger
+     * @return
+     *      this object
+     */
     @NonNull
     public Log error()
     {
         return e();
     }
 
+    /**
+     * Sets logLevel to {@link #ERROR} for current logger
+     * @return
+     *      this object
+     */
     @NonNull
     public Log e()
     {
@@ -960,6 +1016,13 @@ public class Log
         return this;
     }
 
+    /**
+     * Adds string to current statement and changes logger's logLevel to {@link #ERROR}<br>
+     * Equal to a(msg).e()
+     * @param msg message to log
+     * @return
+     *      this object
+     */
     @NonNull
     public Log e(String msg)
     {

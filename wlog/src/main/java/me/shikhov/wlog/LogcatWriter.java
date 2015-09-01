@@ -18,8 +18,7 @@ package me.shikhov.wlog;
 import android.support.annotation.NonNull;
 
 /**
- *
- * Created by Andrew on 07.05.2015.
+ * Wrapper for android Log class, controls length of message(4k limit)
  */
 public final class LogcatWriter implements LogWriter
 {
