@@ -2,7 +2,7 @@
 
 ## 1.2.4
 Date 01/09/2015  
-'+' Added ```Log.newLine()``` or ```Log.nl()``` methods which appends '\n' to the log. This string can be configured by property ```"wlog.logLevel"```<br>
+'+' Added ```Log.newLine()``` or ```Log.nl()``` methods which appends '\n' to the log. This string can be configured by property ```"wlog.newLine"```<br>
 '+' Added support for logging java collections and as special case - maps(output will be in format ```[{'key'='value'],['key'='value'])```<br>
 '+' improved documentation<br>
 '#' fixed array output formatter(first item suffix and last item prefix were not added to output)<br>

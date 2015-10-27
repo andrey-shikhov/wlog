@@ -305,7 +305,7 @@ public class Log
         return Loggers.getLogger();
     }
 
-    private final StringBuilder builder;
+    private final StringJuggler stringJuggler;
 
     private String tag;
 
@@ -319,7 +319,7 @@ public class Log
 
     Log(@NonNull String tag)
     {
-        this.builder = stringBuildersProvider.acqireStringBuilder();
+        this.stringJuggler = new StringJuggler(stringBuildersProvider.acqireStringBuilder());
         this.logWriter = GLOBAL_LOGWRITER;
         this.tag = tag;
         logLevel = DEFAULT_LOG_LEVEL;
@@ -352,7 +352,7 @@ public class Log
     {
         f();
 
-        stringBuildersProvider.releaseStringBuilder(builder);
+        stringBuildersProvider.releaseStringBuilder(stringJuggler.getStringBuilder());
 
         Loggers.removeLogger(this);
         disposed = true;
@@ -411,7 +411,7 @@ public class Log
     @NonNull
     public Log event(@NonNull Object object, @NonNull String event)
     {
-        builder.append(object.getClass().getSimpleName())
+        stringJuggler.append(object.getClass().getSimpleName())
                 .append("@").append(Integer.toHexString(object.hashCode()))
                 .append(" ").append(event);
 
@@ -455,9 +455,9 @@ public class Log
     {
         String message;
 
-        if(builder.length() > 0)
+        if(stringJuggler.hasData())
         {
-            message = builder.toString();
+            message = stringJuggler.getString();
         }
         else
         {
@@ -471,9 +471,9 @@ public class Log
             throwableToLog = null;
         }
 
-        if(builder.length() > 0)
+        if(stringJuggler.hasData())
         {
-            builder.delete(0, builder.length());
+            stringJuggler.clear();
         }
 
         throwableToLog = null;
@@ -521,7 +521,7 @@ public class Log
     public Log a(boolean value)
     {
         checkDisposed();
-        builder.append(value);
+        stringJuggler.append(Boolean.toString(value));
         return this;
     }
 
@@ -550,7 +550,7 @@ public class Log
     public Log a(char value)
     {
         checkDisposed();
-        builder.append(value);
+        stringJuggler.append(Character.toString(value));
         return this;
     }
 
@@ -580,7 +580,7 @@ public class Log
     public Log a(long value)
     {
         checkDisposed();
-        builder.append(value);
+        stringJuggler.append(Long.toString(value));
         return this;
     }
 
@@ -609,7 +609,7 @@ public class Log
     public Log a(float value)
     {
         checkDisposed();
-        builder.append(value);
+        stringJuggler.append(Float.toString(value));
         return this;
     }
 
@@ -638,7 +638,7 @@ public class Log
     public Log a(double value)
     {
         checkDisposed();
-        builder.append(value);
+        stringJuggler.append(Double.toString(value));
         return this;
     }
 
@@ -667,7 +667,7 @@ public class Log
     public Log a(@Nullable char[] value)
     {
         checkDisposed();
-        builder.append(value == null ? "null" : value);
+        stringJuggler.append(value == null ? "null" : String.valueOf(value));
         return this;
     }
 
@@ -694,14 +694,7 @@ public class Log
     {
         checkDisposed();
 
-        if(radix == 10)
-        {
-            builder.append(value);
-        }
-        else
-        {
-            builder.append(Integer.toString(value, radix));
-        }
+        stringJuggler.append(Integer.toString(value, radix));
 
         return this;
     }
@@ -731,7 +724,7 @@ public class Log
     public Log a(@Nullable Object object)
     {
         checkDisposed();
-        builder.append(object);
+        stringJuggler.append(object == null ? "null" : object.toString());
 
         return this;
     }
@@ -742,7 +735,7 @@ public class Log
         checkDisposed();
 
         SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
-                builder,
+                stringJuggler.getStringBuilder(),
                 collection);
 
         return this;
@@ -760,7 +753,7 @@ public class Log
         checkDisposed();
 
         SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
-                builder,
+                stringJuggler.getStringBuilder(),
                 map);
 
         return this;
@@ -782,7 +775,7 @@ public class Log
     public Log a(@NonNull String string)
     {
         checkDisposed();
-        builder.append(string);
+        stringJuggler.append(string);
 
         return this;
     }
@@ -798,11 +791,11 @@ public class Log
     {
         checkDisposed();
         if(array == null)
-            builder.append("null");
+            stringJuggler.append("null");
         else
         {
             SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
-                    builder, array);
+                    stringJuggler.getStringBuilder(), array);
         }
 
         return this;
@@ -822,11 +815,11 @@ public class Log
     {
         checkDisposed();
         if(array == null)
-            builder.append("null");
+            stringJuggler.append("null");
         else
         {
             SequenceFormatter.format(formatter,
-                    builder, array);
+                    stringJuggler.getStringBuilder(), array);
         }
 
         return this;
