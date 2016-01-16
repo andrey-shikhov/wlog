@@ -22,7 +22,7 @@ But remember if string concatenation is used in such methods it should be replac
 Library is in `jcenter` and `mavenCentral` repositories, so you only need to declare it in dependencies in your `build.gradle`
 ```
 dependencies {
-    compile 'me.shikhov:wlog:1.2.4'
+    compile 'me.shikhov:wlog:1.3.1'
 }
 ```
 
@@ -51,7 +51,7 @@ I found it, and this is mathematical "without loss of generality", so I stopped 
 
 # License
 
-    Copyright 2015 Andrew Shikhov
+    Copyright 2016 Andrew Shikhov
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

@@ -18,6 +18,7 @@ package me.shikhov.wlog;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 
@@ -724,7 +725,28 @@ public class Log
     public Log a(@Nullable Object object)
     {
         checkDisposed();
-        stringJuggler.append(object == null ? "null" : object.toString());
+
+        if(object == null)
+        {
+            stringJuggler.append("null");
+            return this;
+        }
+
+        if(object.getClass().isArray())
+        {
+            int len = Array.getLength(object);
+
+            Object[] objects = new Object[len];
+
+            for(int i = 0; i < len; i++)
+            {
+                objects[i] = Array.get(object, i);
+            }
+
+            return a(objects);
+        }
+
+        stringJuggler.append(object.toString());
 
         return this;
     }
