@@ -756,9 +756,7 @@ public class Log
     {
         checkDisposed();
 
-        SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
-                stringJuggler.getStringBuilder(),
-                collection);
+        SequenceFormatter.format(stringJuggler.getStringBuilder(), collection);
 
         return this;
     }
@@ -774,9 +772,7 @@ public class Log
     {
         checkDisposed();
 
-        SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
-                stringJuggler.getStringBuilder(),
-                map);
+        SequenceFormatter.format(stringJuggler.getStringBuilder(), map);
 
         return this;
     }
@@ -816,8 +812,7 @@ public class Log
             stringJuggler.append("null");
         else
         {
-            SequenceFormatter.format(SequenceFormatter.getDefaultFormatter(),
-                    stringJuggler.getStringBuilder(), array);
+            SequenceFormatter.format(stringJuggler.getStringBuilder(), array);
         }
 
         return this;

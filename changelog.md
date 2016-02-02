@@ -1,5 +1,10 @@
 # Version history
 
+## 1.3.1
+Date 02/02/2016
+'+' handling of primitive arrays logging
+'+' SequenceFormatter improved interface and now publicly accessible for any purposes
+
 ## 1.2.4
 Date 01/09/2015  
 '+' Added ```Log.newLine()``` or ```Log.nl()``` methods which appends '\n' to the log. This string can be configured by property ```"wlog.newLine"```<br>

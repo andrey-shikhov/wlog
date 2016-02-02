@@ -38,13 +38,7 @@ public class SequenceFormatter
               null
             };
 
-    private static final SequenceFormatter DEFAULT_FORMATTER = new SequenceFormatter();
-
-    @NonNull
-    public static SequenceFormatter getDefaultFormatter()
-    {
-        return DEFAULT_FORMATTER;
-    }
+    public static final SequenceFormatter DEFAULT_FORMATTER = new SequenceFormatter();
 
     public static final int PREFIX = 0;
     public static final int ITEM_PREFIX = 1;
@@ -99,18 +93,27 @@ public class SequenceFormatter
         }
     }
 
+    public <T> SequenceFormatter doFormat(@NonNull StringBuilder builder, @Nullable T[] array)
+    {
+        return format(this, builder, array);
+    }
 
-    public static <T> void format(@NonNull SequenceFormatter formatter,
+    public static <T> SequenceFormatter format(@NonNull StringBuilder builder, @Nullable T[] array)
+    {
+        return format(DEFAULT_FORMATTER, builder, array);
+    }
+
+    public static <T> SequenceFormatter format(@NonNull SequenceFormatter formatter,
                                   @NonNull StringBuilder builder, @Nullable T[] array)
     {
         if(handleNull(builder, array))
-            return;
+            return formatter;
 
         //noinspection ConstantConditions
         if(array.length == 0)
         {
             handleEmptySequence(formatter, builder);
-            return;
+            return formatter;
         }
 
         builder.append(formatter.format[PREFIX])
@@ -137,19 +140,31 @@ public class SequenceFormatter
 
         builder.append(formatter.format[LAST_ITEM_SUFFIX])
                .append(formatter.format[SUFFIX]);
+
+        return formatter;
     }
 
-    public static <T> void format(@NonNull SequenceFormatter formatter, @NonNull StringBuilder builder,
+    public <T> SequenceFormatter doFormat(@NonNull StringBuilder builder, @Nullable Collection<T> collection)
+    {
+        return format(this, builder, collection);
+    }
+
+    public static <T> SequenceFormatter format(@NonNull StringBuilder builder, @Nullable Collection<T> collection)
+    {
+        return format(DEFAULT_FORMATTER, builder, collection);
+    }
+
+    public static <T> SequenceFormatter format(@NonNull SequenceFormatter formatter, @NonNull StringBuilder builder,
                                   @Nullable Collection<T> collection)
     {
         if(handleNull(builder, collection))
-            return;
+            return formatter;
 
         //noinspection ConstantConditions
         if(collection.isEmpty())
         {
             handleEmptySequence(formatter, builder);
-            return;
+            return formatter;
         }
 
         builder.append(formatter.format[PREFIX])
@@ -181,19 +196,27 @@ public class SequenceFormatter
 
         builder.append(formatter.format[LAST_ITEM_SUFFIX])
                .append(formatter.format[SUFFIX]);
+
+        return formatter;
     }
 
-    public static <T,V> void format(@NonNull SequenceFormatter formatter, @NonNull StringBuilder builder,
+    public static <T,V> SequenceFormatter format(@NonNull StringBuilder builder,
+                                    @Nullable Map<T,V> map)
+    {
+        return format(DEFAULT_FORMATTER, builder, map);
+    }
+
+    public static <T,V> SequenceFormatter format(@NonNull SequenceFormatter formatter, @NonNull StringBuilder builder,
                                   @Nullable Map<T,V> map)
     {
         if(handleNull(builder, map))
-            return;
+            return formatter;
 
         //noinspection ConstantConditions
         if(map.isEmpty())
         {
             handleEmptySequence(formatter, builder);
-            return;
+            return formatter;
         }
 
         builder.append(formatter.format[PREFIX])
@@ -235,6 +258,8 @@ public class SequenceFormatter
 
         builder.append(formatter.format[LAST_ITEM_SUFFIX])
                .append(formatter.format[SUFFIX]);
+
+        return formatter;
     }
 
     private static <T,V> void handleEntry(@NonNull StringBuilder builder, @NonNull Map.Entry<T,V> entry)

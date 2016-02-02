@@ -91,7 +91,7 @@ public class MainActivity extends Activity
 
         int[] test_arr = new int[]{0,1,2,3,5,8,13,21};
 
-        Log.get(TAG).a("array: ").<int[]>a(test_arr).w().r();
+        Log.get(TAG).a("array: ").a(test_arr).w().r();
     }
 
     @Override
