@@ -9,13 +9,13 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 28
+
     defaultConfig {
         applicationId "me.shikhov.wlogtest"
         minSdkVersion 16
-        targetSdkVersion 23
-        versionCode 2
+        targetSdkVersion 28
+        versionCode 3
         versionName "1.1"
     }
     buildTypes {
@@ -28,12 +28,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile project(':wlog')
-}
-
-repositories{
-    flatDir{
-        dirs 'libs'
-    }
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation project(':wlog')
 }
