@@ -15,12 +15,13 @@
  *******************************************************************************/
 package me.shikhov.wlog;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
  * Main entry for this library.
@@ -297,13 +298,13 @@ public class Log
     @NonNull
     public static Log get(@NonNull final String tag)
     {
-        return Loggers.getLogger(tag);
+        return Loggers.INSTANCE.getLogger(tag);
     }
 
     @NonNull
     public static Log get()
     {
-        return Loggers.getLogger();
+        return Loggers.INSTANCE.getLogger();
     }
 
     private final StringJuggler stringJuggler;
@@ -355,7 +356,7 @@ public class Log
 
         stringBuildersProvider.releaseStringBuilder(stringJuggler.getStringBuilder());
 
-        Loggers.removeLogger(this);
+        Loggers.INSTANCE.removeLogger(this);
         disposed = true;
     }
 

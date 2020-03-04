@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015 Andrew Shikhov.
+ * Copyright 2015-2020 Andrew Shikhov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,30 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *******************************************************************************/
-package me.shikhov.wlog;
-
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+ */
+package me.shikhov.wlog
 
 /**
  * Basic interface for log writers
  * @see LogcatWriter
- * Created by Andrew on 07.05.2015.
  */
-public interface LogWriter
-{
+interface LogWriter {
     /**
-     * Method should write log to underlying storage/console. <br>
+     * Method should write log to underlying storage/console. <br></br>
      * message and throwable can't be null simultaneously.
      * @param logLevel
-     *      logLevel from {@link Log#VERBOSE} to {@link Log#ASSERT}
+     * logLevel from [Log.VERBOSE] to [Log.ASSERT]
      * @param tag
-     *      nonnull tag, usually class name.
+     * nonnull tag, usually class name.
      * @param message
-     *      nullable message to log
+     * nullable message to log
      * @param throwable
-     *      nullable throwable to log
+     * nullable throwable to log
      */
-    void write(int logLevel,@NonNull String tag,@Nullable String message,@Nullable Throwable throwable);
+    fun write(logLevel: Int, tag: String, message: String?, throwable: Throwable?)
 }

@@ -1,6 +1,7 @@
 package me.shikhov.wlog;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 class SpacerStringJuggler extends StringJuggler
 {
