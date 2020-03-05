@@ -1,5 +1,12 @@
 # Version history
 
+## 2.0.0
+Date 05/03/2020
+'+' migrated to kotlin language
+'+' special handling of UI thread Logger for speedup
+'+' new way to create log using dsl builder
+'-' removed logLevel modification methods in favor of parameter of release method  
+
 ## 1.3.1
 Date 02/02/2016
 '+' handling of primitive arrays logging

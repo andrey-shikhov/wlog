@@ -1,7 +1,10 @@
+# NEW
+Doc below a little bit outdated, because 2.0.0 version is rewritten with kotlin, will be updated soon 
+_________________
 # wlog
 [ ![jcenter](https://api.bintray.com/packages/andrey-shikhov/maven/wlog/images/download.svg) ](https://bintray.com/andrey-shikhov/maven/wlog/_latestVersion)
 [ ![mavenCentral](https://maven-badges.herokuapp.com/maven-central/me.shikhov/wlog/badge.png)
-](http://search.maven.org/#artifactdetails%7Cme.shikhov%7Cwlog%7C1.2.4%7Caar)
+](http://search.maven.org/#artifactdetails%7Cme.shikhov%7Cwlog%7C1.4.0%7Caar)
 
 Ultimate enhancement of android android.util.Log class, no proguard leftovers, convenient way to log basic types, arrays, collections, exceptions and much more!
 
@@ -22,7 +25,7 @@ But remember if string concatenation is used in such methods it should be replac
 Library is in `jcenter` and `mavenCentral` repositories, so you only need to declare it in dependencies in your `build.gradle`
 ```
 dependencies {
-    compile 'me.shikhov:wlog:1.3.1'
+    implementation 'me.shikhov:wlog:2.0.0'
 }
 ```
 
@@ -51,7 +54,7 @@ I found it, and this is mathematical "without loss of generality", so I stopped 
 
 # License
 
-    Copyright 2016 Andrew Shikhov
+    Copyright 2020 Andrew Shikhov
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

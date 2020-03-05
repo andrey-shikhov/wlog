@@ -15,33 +15,105 @@
  */
 package me.shikhov.wlog
 
+import java.io.PrintWriter
+import java.io.StringWriter
+
+
 /**
  * Wrapper for android Log class, controls length of the message(4k limit)
  */
-class LogcatWriter private constructor() : LogWriter {
+object LogcatWriter : LogWriter {
+
     override fun write(logLevel: Int, tag: String, message: String?, throwable: Throwable?) {
-        if (throwable == null) {
-            if(message != null)
+        if(message != null) {
+            if(throwable != null) {
+                write(logLevel, tag, buildMessage(message, throwable))
+            } else {
                 write(logLevel, tag, message)
+            }
         } else {
-            android.util.Log.println(logLevel, tag, "$message\n${Log.getStackTraceString(throwable)}")
+            if(throwable != null) {
+                write(logLevel, tag, android.util.Log.getStackTraceString(throwable))
+            }
         }
     }
 
     private fun write(logLevel: Int, tag: String, message: String) {
-        if (message.length > 4000) {
-            val count = message.length / 4000
-            for (i in 0 until count) {
-                android.util.Log.println(logLevel, tag, message.substring(i * 4000, (i + 1) * 4000))
+        val len = message.utf8Length()
+        if (len > 4000) {
+            message.split(4000).forEach {
+                android.util.Log.println(logLevel, tag, it)
             }
-            android.util.Log.println(logLevel, tag, message.substring(count * 4000))
         } else {
             android.util.Log.println(logLevel, tag, message)
         }
     }
 
-    companion object {
-        @JvmStatic
-        val instance = LogcatWriter()
+    private fun buildMessage(message: String, throwable: Throwable) : String {
+        val sw = StringWriter()
+        val pw = PrintWriter(sw)
+        pw.println(message)
+        pw.println()
+        throwable.printStackTrace(pw)
+        pw.flush()
+
+        return sw.toString()
     }
+}
+
+internal fun String.split(chunkByteSize: Int): List<String> {
+
+    val chunks = mutableListOf<String>()
+
+    var count = 0
+    var i = 0
+    val len = this.length
+    var chunkStart = 0
+
+    while (i < len) {
+        val ch = this[i]
+        when {
+            ch.toInt() <= 0x7F -> count++
+            ch.toInt() <= 0x7FF -> count += 2
+            Character.isHighSurrogate(ch) -> {
+                count += 4
+                ++i
+            }
+            else -> count += 3
+        }
+
+        i++
+
+        if(count >= chunkByteSize) {
+            chunks += substring(chunkStart, i)
+            chunkStart = i
+            count = 0
+        }
+    }
+
+    if(count > 0) {
+        chunks += substring(chunkStart)
+    }
+
+    return chunks
+}
+
+fun CharSequence.utf8Length(): Int {
+    var count = 0
+    var i = 0
+    val len = this.length
+    while (i < len) {
+        val ch = this[i]
+        when {
+            ch.toInt() <= 0x7F -> count++
+            ch.toInt() <= 0x7FF -> count += 2
+            Character.isHighSurrogate(ch) -> {
+                count += 4
+                ++i
+            }
+            else -> count += 3
+        }
+        i++
+    }
+    return count
 }

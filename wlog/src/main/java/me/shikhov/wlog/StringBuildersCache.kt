@@ -24,11 +24,13 @@ import java.util.*
  * Size of cached builders can be changed by setting system property "wlog.reservedCapacity".
  * Size set in characters, default value is 16384
  */
-internal class StringBuildersProvider {
-    private val reservedStringBuilders: MutableList<StringBuilder> = ArrayList()
-    private val sbMutex = Any()
+internal object StringBuildersCache {
+
+    private val reservedStringBuilders =  mutableListOf<StringBuilder>()
+
     private var reservedCapacity = 0
-    private val maxReservedCapacity: Int
+
+    private val maxReservedCapacity: Int = System.getenv("wlog.reservedCapacity")?.toInt() ?: 16384
 
     /**
      * Returns stringbuilder for logging, for new objects capacity is 128 chars.
@@ -36,13 +38,14 @@ internal class StringBuildersProvider {
      * new or used StringBuilder object, so capacity varies from object to object
      */
     fun acqireStringBuilder(): StringBuilder {
-        synchronized(sbMutex) {
+        synchronized(this) {
             if (reservedStringBuilders.isNotEmpty()) {
                 val sb = reservedStringBuilders.removeAt(reservedStringBuilders.size - 1)
                 reservedCapacity -= sb.capacity()
                 return sb
             }
         }
+
         return StringBuilder(128)
     }
 
@@ -52,18 +55,11 @@ internal class StringBuildersProvider {
      * @param stringBuilder
      */
     fun releaseStringBuilder(stringBuilder: StringBuilder) {
-        synchronized(sbMutex) {
+        synchronized(this) {
             if (reservedCapacity + stringBuilder.capacity() < maxReservedCapacity) {
-                reservedStringBuilders.add(stringBuilder)
+                reservedStringBuilders += stringBuilder
                 reservedCapacity += stringBuilder.capacity()
             }
         }
-    }
-
-    init {
-        if (BuildConfig.DEBUG) {
-            Log.d("wlog", "wlog.reservedCapacity=" + System.getenv("wlog.reservedCapacity"))
-        }
-        maxReservedCapacity = 16384
     }
 }

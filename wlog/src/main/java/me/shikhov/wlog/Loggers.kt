@@ -15,34 +15,28 @@
  */
 package me.shikhov.wlog
 
+import android.os.Looper
 import android.os.Process
+import android.util.SparseArray
 import java.util.*
 
 internal object Loggers {
 
-    private val mutex = Any()
-    private val loggers = HashMap<Int, Log>()
+    private val mainThreadId = Looper.getMainLooper().thread.id
 
-    val logger: Log
-        get() {
-            val threadId = Process.myTid()
-            var logger = loggers[threadId]
-            if (logger == null) {
-                logger = Log("LOG")
-                synchronized(mutex) {
-                    loggers[threadId] = logger
-                }
-            }
-            return logger
-        }
-
-    fun getLogger(tag: String): Log {
-        val logger = logger
-        logger.setTag(tag)
-        return logger
+    internal val mainLogger: Log by lazy {
+        Log("LOG")
     }
 
-    fun removeLogger(log: Log) {
-        synchronized(mutex) { loggers.values.remove(log) }
+    fun getLogger(tag: String): Log {
+        val threadId = Thread.currentThread().id
+
+        if(threadId == mainThreadId) {
+            return mainLogger.apply {
+                this.tag = tag
+            }
+        }
+
+        return Log(tag)
     }
 }
