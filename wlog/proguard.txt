@@ -1,7 +1,7 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
--assumenosideeffects class me.shikhov.wlog.Log {
-    public <methods>;
-    public static <methods>;
-}
+#-assumenosideeffects class me.shikhov.wlog.Log {
+#    public <methods>;
+#    public static <methods>;
+#}

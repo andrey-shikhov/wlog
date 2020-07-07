@@ -29,25 +29,32 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log[TAG].event(this, "onCreate").release()
+        Log[TAG].event(this, "onCreate").r()
         setContentView(R.layout.activity_main)
     }
+
+    val someProp = "hello!"
 
     override fun onResume() {
         super.onResume()
         Log[TAG].event(this, "onResume").r()
-        Log[TAG].a(arrayOf(1, 2, 3, 4, 5)).release()
+
+        Log[TAG].a(arrayOf(1, 2, 3, 4, 5)).r()
+
         val list: MutableList<String> = ArrayList()
         list.add("one")
         list.add("two")
         list.add("three")
+
         Log[TAG].a(list).r()
+
         val map = HashMap<String, String?>()
         map["one"] = "not two"
         map["two"] = "not three"
         map["three"] = "not four"
         map["four"] = null
         Log[TAG].a(map).r()
+
         val t: MutableList<String> = LinkedList()
         t.add("singleItem")
         val m: MutableMap<String, Int> = LinkedHashMap()
@@ -59,21 +66,29 @@ class MainActivity : Activity() {
         Log[TAG].a("array: ").a(testArr).r(Log.WARN)
 
         Log(TAG) {
-            +"test message 1"
-            +map.toString()
+            line()
             throwable = UnknownServiceException()
+            +"test message 1"
+            +map
+            +testArr
             +"test message 2"
+            +::someProp
+            line(char = '*')
         }
+
+        Log[TAG].a("property: ").a(::someProp).r(Log.INFO)
+
+        Log[TAG].a("onResume end").r()
     }
 
     override fun onPause() {
         super.onPause()
-        Log[TAG].event(this, "onPause").release()
+        Log[TAG].event(this, "onPause").r()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log[TAG].event(this, "onDestroy").release()
+        Log[TAG].event(this, "onDestroy").r()
     }
 
     companion object {

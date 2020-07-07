@@ -17,7 +17,7 @@ ext {
     siteUrl = 'https://github.com/andrey-shikhov/wlog'
     gitUrl = 'https://github.com/andrey-shikhov/wlog.git'
 
-    libraryVersion = '2.0.0'
+    libraryVersion = '2.3.1'
 
     developerId = 'andrey-shikhov'
     developerName = 'Andrew Shikhov'
@@ -35,7 +35,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 29
         versionCode 6
-        versionName "2.0.0"
+        versionName "2.3.1"
     }
 
     buildTypes {

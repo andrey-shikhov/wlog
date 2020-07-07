@@ -1,5 +1,13 @@
 # Version history
 
+## 2.3.1
+Date 07/06/2020
+'-' removed append methods in favor of short a methods
+'+' added support for primitive arrays and objects in log block
+'+' added handy way to log properties in format name=value
+'+' added line method in log block to insert horizontal line with chars
+'-' removed proguard rules
+
 ## 2.0.0
 Date 05/03/2020
 '+' migrated to kotlin language
