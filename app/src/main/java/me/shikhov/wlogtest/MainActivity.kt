@@ -5,6 +5,9 @@ import android.os.Bundle
 import me.shikhov.wlog.Log
 import java.net.UnknownServiceException
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashMap
 
 class MainActivity : Activity() {
 
@@ -21,10 +24,6 @@ class MainActivity : Activity() {
         val schoolFriends: MutableList<Person> = ArrayList()
 
         var universityFriends: Map<String, Person> = HashMap()
-
-        override fun toString(): String {
-            return super.toString()
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,9 +41,9 @@ class MainActivity : Activity() {
         Log[TAG].a(arrayOf(1, 2, 3, 4, 5)).r()
 
         val list: MutableList<String> = ArrayList()
-        list.add("one")
-        list.add("two")
-        list.add("three")
+        list += "one"
+        list += "two"
+        list += "three"
 
         Log[TAG].a(list).r()
 
@@ -55,7 +54,7 @@ class MainActivity : Activity() {
         map["four"] = null
         Log[TAG].a(map).r()
 
-        val t: MutableList<String> = LinkedList()
+        val t = LinkedList<String>()
         t.add("singleItem")
         val m: MutableMap<String, Int> = LinkedHashMap()
         m["singleItem"] = 8

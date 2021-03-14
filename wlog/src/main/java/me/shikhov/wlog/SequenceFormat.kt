@@ -15,8 +15,6 @@
  */
 package me.shikhov.wlog
 
-import androidx.annotation.CheckResult
-
 /**
  * Useful class to prepare output for array
  */
@@ -30,20 +28,18 @@ class SequenceFormat(val prefix: CharSequence,
      * Builder function which allows modify this instance without mandatory filling of all fields
      * @return new instance of SequenceFormatter
      */
-    @CheckResult
-    fun new(prefix: CharSequence? = null,
-            postfix: CharSequence? = null,
-            separator: CharSequence? = null,
-            limit: Int? = null,
-            truncated: CharSequence? = null): SequenceFormat {
 
-        return SequenceFormat(
-                prefix ?: this.prefix,
-                postfix ?: this.postfix,
-                separator ?: this.separator,
-                limit ?: this.limit,
-                truncated ?: this.truncated)
-    }
+    fun copy(prefix: CharSequence = this.prefix,
+             postfix: CharSequence = this.postfix,
+             separator: CharSequence = this.separator,
+             limit: Int = this.limit,
+             truncated: CharSequence = this.truncated) =
+
+        SequenceFormat(prefix,
+                       postfix,
+                       separator,
+                       limit,
+                       truncated)
 
     companion object {
         val DEFAULT = SequenceFormat("[", "]", ", ", -1, "...")

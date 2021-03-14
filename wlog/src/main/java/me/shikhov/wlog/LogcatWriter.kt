@@ -51,12 +51,12 @@ object LogcatWriter : LogWriter {
 
     private fun buildMessage(message: String, throwable: Throwable) : String {
         val sw = StringWriter()
-        val pw = PrintWriter(sw)
-        pw.println(message)
-        pw.println()
-        throwable.printStackTrace(pw)
-        pw.flush()
-
+        with(PrintWriter(sw)) {
+            println(message)
+            println()
+            throwable.printStackTrace(this)
+            flush()
+        }
         return sw.toString()
     }
 }
@@ -98,7 +98,7 @@ internal fun String.split(chunkByteSize: Int): List<String> {
     return chunks
 }
 
-fun CharSequence.utf8Length(): Int {
+internal fun CharSequence.utf8Length(): Int {
     var count = 0
     var i = 0
     val len = this.length

@@ -16,9 +16,6 @@
 package me.shikhov.wlog
 
 import android.os.Looper
-import android.os.Process
-import android.util.SparseArray
-import java.util.*
 
 internal object Loggers {
 

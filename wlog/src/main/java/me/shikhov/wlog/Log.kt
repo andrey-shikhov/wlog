@@ -82,7 +82,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
         }
 
         operator fun<T> Array<T>.unaryPlus() {
-            a(this)
+            a(this.contentToString())
             if(autoNewLine) nl()
         }
 
@@ -141,6 +141,10 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
             }
             if(autoNewLine) nl()
         }
+
+        operator fun String.rangeTo(param: Any) {
+            a(this).a("=").a(param)
+        }
     }
 
     private val logBuilder by lazy { LogBuilder() }
@@ -182,7 +186,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      */
     fun event(`object`: Any, event: String): Log {
         stringJuggler.append(`object`.javaClass.simpleName)
-                .append("@").append(Integer.toHexString(`object`.hashCode()))
+                .append("@").append(`object`.hashCode().toString(16))
                 .append(" ").append(event)
         return this
     }
