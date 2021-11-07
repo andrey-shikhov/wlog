@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015-2020 Andrew Shikhov.
+ * Copyright 2015-2021 Andrew Shikhov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package me.shikhov.wlog
 
+import androidx.annotation.CheckResult
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -61,8 +62,12 @@ object LogcatWriter : LogWriter {
     }
 }
 
+/**
+ * Splits string into chunks with specified max size in bytes,
+ * method is required because an unicode char size in bytes varies from 1 to 4 bytes
+ */
+@CheckResult
 internal fun String.split(chunkByteSize: Int): List<String> {
-
     val chunks = mutableListOf<String>()
 
     var count = 0
@@ -72,14 +77,14 @@ internal fun String.split(chunkByteSize: Int): List<String> {
 
     while (i < len) {
         val ch = this[i]
-        when {
-            ch.toInt() <= 0x7F -> count++
-            ch.toInt() <= 0x7FF -> count += 2
+        count += when {
+            ch.code <= 0x7F -> 1
+            ch.code <= 0x7FF -> 2
             Character.isHighSurrogate(ch) -> {
-                count += 4
                 ++i
+                4
             }
-            else -> count += 3
+            else -> 3
         }
 
         i++
@@ -90,7 +95,7 @@ internal fun String.split(chunkByteSize: Int): List<String> {
             count = 0
         }
     }
-
+    // leftovers
     if(count > 0) {
         chunks += substring(chunkStart)
     }
@@ -104,14 +109,14 @@ internal fun CharSequence.utf8Length(): Int {
     val len = this.length
     while (i < len) {
         val ch = this[i]
-        when {
-            ch.toInt() <= 0x7F -> count++
-            ch.toInt() <= 0x7FF -> count += 2
+        count += when {
+            ch.code <= 0x7F -> 1
+            ch.code <= 0x7FF -> 2
             Character.isHighSurrogate(ch) -> {
-                count += 4
                 ++i
+                4
             }
-            else -> count += 3
+            else -> 3
         }
         i++
     }

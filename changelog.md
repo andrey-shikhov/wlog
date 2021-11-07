@@ -1,4 +1,10 @@
 # Version history
+## 3.5.0 07/11/2021
+'*' updated dependencies, gradle migration to version catalogs, kotlin 1.5.30
+'*' a lot of optimizations for Logger instance used in the main thread
+'*' CheckResult annotations for some methods to help to not forget to use created Log instance
+'*' internal StringJuggler was rewritten to be quicker and unnecessary operations were removed
+'*' deprecated Log[TAG] to unify with new lob builder block, added method Log(TAG)
 
 ## 2.3.1
 Date 07/06/2020

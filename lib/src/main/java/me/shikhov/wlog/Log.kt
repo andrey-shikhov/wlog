@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015-2020 Andrew Shikhov.
+ * Copyright 2015-2021 Andrew Shikhov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package me.shikhov.wlog
 
-import java.lang.UnsupportedOperationException
+import androidx.annotation.CheckResult
 import kotlin.reflect.KProperty0
 
 /**
@@ -25,65 +25,57 @@ import kotlin.reflect.KProperty0
  * @see .r
  * @see .append
  */
-class Log internal constructor(tag: String, separator: CharSequence? = null) {
+sealed class Log(open val tag: String) {
 
-    var tag: String = tag
-        internal set(value) {
-            if(field != value) {
-                f(DEFAULT_LOG_LEVEL)
-                field = value
-            }
-        }
+    protected abstract fun onRelease()
 
-    private val stringJuggler = StringJuggler(StringBuildersCache.acqireStringBuilder(), separator)
+    internal abstract val stringJuggler: StringJuggler
 
     private var logWriter: LogWriter = GLOBAL_LOGWRITER
 
-    private var throwableToLog: Throwable? = null
+    protected var throwableToLog: Throwable? = null
+        private set
 
-    private var isDisposed = false
+    inner class LogBuilder(internal val suffixAction: Log.() -> Unit) {
 
-    inner class LogBuilder {
-
-        var autoNewLine:Boolean = false
-
-        var throwable: Throwable
-            get() = UnsupportedOperationException()
-            set(value) {
-                throwableToLog = value
-            }
+        var throwable: Throwable? by ::throwableToLog
 
         fun line(char: Char = '-', count: Int = 10, nlBefore: Boolean = false, nlAfter: Boolean = false) {
-            if(nlBefore) nl()
+            if (nlBefore) nl()
             repeat(count) { a(char) }
-            if(nlAfter) nl()
+            if (nlAfter) nl()
 
-            if(autoNewLine) nl()
+            suffixAction()
         }
 
-        operator fun<T> KProperty0<T>.unaryPlus() {
+        operator fun <T> KProperty0<T>.unaryPlus() {
             a(this.name).a("=").a(this())
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun Char.unaryPlus() {
             a(this)
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun String.unaryPlus() {
             a(this)
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun Any.unaryPlus() {
             a(this.toString())
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
-        operator fun<T> Array<T>.unaryPlus() {
+        operator fun <T> Array<T>.unaryPlus() {
             a(this.contentToString())
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun ByteArray.unaryPlus() {
@@ -91,7 +83,8 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
             with(SequenceFormat.DEFAULT) {
                 arr.joinTo(stringJuggler, separator, prefix, postfix, limit, truncated)
             }
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun CharArray.unaryPlus() {
@@ -99,7 +92,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
             with(SequenceFormat.DEFAULT) {
                 arr.joinTo(stringJuggler, separator, prefix, postfix, limit, truncated)
             }
-            if(autoNewLine) nl()
+            suffixAction()
         }
 
         operator fun ShortArray.unaryPlus() {
@@ -107,7 +100,8 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
             with(SequenceFormat.DEFAULT) {
                 arr.joinTo(stringJuggler, separator, prefix, postfix, limit, truncated)
             }
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun IntArray.unaryPlus() {
@@ -115,7 +109,8 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
             with(SequenceFormat.DEFAULT) {
                 arr.joinTo(stringJuggler, separator, prefix, postfix, limit, truncated)
             }
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun LongArray.unaryPlus() {
@@ -123,23 +118,25 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
             with(SequenceFormat.DEFAULT) {
                 arr.joinTo(stringJuggler, separator, prefix, postfix, limit, truncated)
             }
-            if(autoNewLine) nl()
+            suffixAction()
         }
 
         operator fun FloatArray.unaryPlus() {
             val arr = this
             with(SequenceFormat.DEFAULT) {
-                arr.joinTo(stringJuggler.stringBuilder, separator, prefix, postfix, limit, truncated)
+                arr.joinTo(stringJuggler, separator, prefix, postfix, limit, truncated)
             }
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun DoubleArray.unaryPlus() {
             val arr = this
             with(SequenceFormat.DEFAULT) {
-                arr.joinTo(stringJuggler.stringBuilder, separator, prefix, postfix, limit, truncated)
+                arr.joinTo(stringJuggler, separator, prefix, postfix, limit, truncated)
             }
-            if(autoNewLine) nl()
+
+            suffixAction()
         }
 
         operator fun String.rangeTo(param: Any) {
@@ -147,18 +144,12 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
         }
     }
 
-    private val logBuilder by lazy { LogBuilder() }
-
     /**
      * Disposes this log object and returns underlying stringBuilder to the pool.
      */
     fun r(logLevel: Int = DEFAULT_LOG_LEVEL) {
         f(logLevel)
-
-        if(Loggers.mainLogger !== this) {
-            StringBuildersCache.releaseStringBuilder(stringJuggler.stringBuilder)
-            isDisposed = true
-        }
+        onRelease()
     }
 
     /**
@@ -184,10 +175,11 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * @return
      * this log object
      */
-    fun event(`object`: Any, event: String): Log {
+    @CheckResult
+    fun event(`object`: Any, event: String, additionalInfo: String = ""): Log {
         stringJuggler.append(`object`.javaClass.simpleName)
-                .append("@").append(`object`.hashCode().toString(16))
-                .append(" ").append(event)
+            .append('@').append(`object`.hashCode().toString(16))
+            .append(' ').append(event).append(' ').append(additionalInfo)
         return this
     }
 
@@ -198,19 +190,14 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * @return
      * this object
      */
-    fun nl(): Log {
-        return a(NEW_LINE)
-    }
+    fun nl() = a(NEW_LINE)
 
     /**
      * Flushes log(if any data written or throwable was set) to the current LogWriter(typically LogCat)
      */
     private fun f(logLevel: Int) {
-        val message = if (stringJuggler.isNotEmpty()) {
-            stringJuggler.string
-        } else {
-            ""
-        }
+        val message = stringJuggler.toString()
+
         if (message.isNotEmpty() || throwableToLog != null) {
             logWriter.write(logLevel, tag, message, throwableToLog)
             throwableToLog = null
@@ -219,7 +206,6 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
             stringJuggler.clear()
         }
         throwableToLog = null
-        logBuilder.autoNewLine = false
     }
 
     //region append methods
@@ -232,7 +218,6 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * this object
      */
     fun a(value: Boolean): Log {
-        checkDisposed()
         stringJuggler.append(java.lang.Boolean.toString(value))
         return this
     }
@@ -245,7 +230,6 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * this object
      */
     fun a(value: Char): Log {
-        checkDisposed()
         stringJuggler.append(value)
         return this
     }
@@ -259,7 +243,6 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * @see .a
      */
     fun a(value: Long): Log {
-        checkDisposed()
         stringJuggler.append(value.toString())
         return this
     }
@@ -272,7 +255,6 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * this object
      */
     fun a(value: Float): Log {
-        checkDisposed()
         stringJuggler.append(value.toString())
         return this
     }
@@ -285,7 +267,6 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * this object
      */
     fun a(value: Double): Log {
-        checkDisposed()
         stringJuggler.append(value.toString())
         return this
     }
@@ -298,13 +279,11 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * this object
      */
     fun a(value: CharArray?): Log {
-        checkDisposed()
         stringJuggler.append(value?.let { String(it) } ?: "null")
         return this
     }
 
     fun a(value: Int, radix: Int = 10): Log {
-        checkDisposed()
         stringJuggler.append(value.toString(radix))
         return this
     }
@@ -317,7 +296,6 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * this object
      */
     fun a(`object`: Any?): Log {
-        checkDisposed()
         if (`object` == null) {
             stringJuggler.append("null")
             return this
@@ -335,36 +313,32 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
     }
 
     fun <T> a(iterable: Iterable<T>?, format: SequenceFormat? = null): Log {
-        checkDisposed()
-
         val f = format ?: SequenceFormat.DEFAULT
 
-        iterable?.joinTo(stringJuggler,
-                f.separator,
-                f.prefix,
-                f.postfix,
-                f.limit,
-                f.truncated)
-                ?: run { stringJuggler.append("null") }
+        iterable?.joinTo(
+            stringJuggler,
+            f.separator,
+            f.prefix,
+            f.postfix,
+            f.limit,
+            f.truncated
+        )
+            ?: run { stringJuggler.append("null") }
 
         return this
     }
 
     fun <T, V> a(map: Map<T, V>?): Log {
-        checkDisposed()
-
         stringJuggler.append(map.toString())
         return this
     }
 
     fun a(string: String): Log {
-        checkDisposed()
         stringJuggler.append(string)
         return this
     }
 
-    fun<T> a(property: KProperty0<T>, divider: String = "="): Log {
-        checkDisposed()
+    fun <T> a(property: KProperty0<T>, divider: String = "="): Log {
         stringJuggler.append(property.name).append(divider)
         a(property())
         return this
@@ -379,17 +353,16 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
      * @return
      * this object
      */
-    fun <T> a(array: Array<T>?, format: SequenceFormat? = null): Log {
-        checkDisposed()
+    fun <T> a(array: Array<T>?, format: SequenceFormat = SequenceFormat.DEFAULT): Log {
         if (array == null) stringJuggler.append("null") else {
-            val f = format ?: SequenceFormat.DEFAULT
-
-            array.joinTo(stringJuggler,
-            f.separator,
-            f.prefix,
-            f.postfix,
-            f.limit,
-            f.truncated)
+            array.joinTo(
+                stringJuggler,
+                format.separator,
+                format.prefix,
+                format.postfix,
+                format.limit,
+                format.truncated
+            )
         }
         return this
     }
@@ -414,13 +387,6 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
         return a(className)
     }
     //endregion
-    /**
-     * Checks if logger is disposed(underlying StringBuilder returned to pool) and prevents
-     * any manipulation if logger in this state by throwing IllegalStateException
-     */
-    private fun checkDisposed() {
-        check(!isDisposed) { "Log $tag is disposed, usage after release() call is prohibited" }
-    }
 
     companion object {
         //region logLevel constants
@@ -463,7 +429,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param msg The message you would like logged.
          */
         fun v(tag: String, msg: String?) {
-            get(tag).a(msg).r(VERBOSE)
+            invoke(tag).a(msg).r(VERBOSE)
         }
 
         /**
@@ -474,7 +440,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param tr An exception to log
          */
         fun v(tag: String, msg: String?, tr: Throwable) {
-            get(tag).a(msg).t(tr).r(VERBOSE)
+            invoke(tag).a(msg).t(tr).r(VERBOSE)
         }
 
         /**
@@ -484,7 +450,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param msg The message you would like logged.
          */
         fun d(tag: String, msg: String?) {
-            get(tag).a(msg).r(DEBUG)
+            invoke(tag).a(msg).r(DEBUG)
         }
 
         /**
@@ -495,7 +461,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param tr An exception to log
          */
         fun d(tag: String, msg: String?, tr: Throwable) {
-            get(tag).a(msg).t(tr).r(DEBUG)
+            invoke(tag).a(msg).t(tr).r(DEBUG)
         }
 
         /**
@@ -505,7 +471,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param msg The message you would like logged.
          */
         fun i(tag: String, msg: String?) {
-            get(tag).a(msg).r(INFO)
+            invoke(tag).a(msg).r(INFO)
         }
 
         /**
@@ -516,7 +482,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param tr An exception to log
          */
         fun i(tag: String, msg: String?, tr: Throwable) {
-            get(tag).a(msg).t(tr).r(INFO)
+            invoke(tag).a(msg).t(tr).r(INFO)
         }
 
         /**
@@ -526,7 +492,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param msg The message you would like logged.
          */
         fun w(tag: String, msg: String?) {
-            get(tag).a(msg).r(WARN)
+            invoke(tag).a(msg).r(WARN)
         }
 
         /**
@@ -537,7 +503,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param tr An exception to log
          */
         fun w(tag: String, msg: String?, tr: Throwable) {
-            get(tag).a(msg).t(tr).r(WARN)
+            invoke(tag).a(msg).t(tr).r(WARN)
         }
 
         /**
@@ -547,7 +513,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param tr An exception to log
          */
         fun w(tag: String, tr: Throwable) {
-            get(tag).t(tr).r(WARN)
+            invoke(tag).t(tr).r(WARN)
         }
 
         /**
@@ -557,7 +523,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param msg The message you would like logged.
          */
         fun e(tag: String, msg: String?) {
-            get(tag).a(msg).r(ERROR)
+            invoke(tag).a(msg).r(ERROR)
         }
 
         /**
@@ -568,7 +534,7 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param tr An exception to log
          */
         fun e(tag: String, msg: String?, tr: Throwable) {
-            get(tag).a(msg).t(tr).r(ERROR)
+            invoke(tag).a(msg).t(tr).r(ERROR)
         }
 
         /**
@@ -592,12 +558,12 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
         fun println(priority: Int, tag: String?, msg: String): Int {
             return android.util.Log.println(priority, tag, msg)
         }
-
         //endregion
+
         private var GLOBAL_LOGWRITER: LogWriter = LogcatWriter
         private var DEFAULT_LOG_LEVEL = DEBUG
         private var NEW_LINE = "\n"
-        private var DEFAULT_SEPARATOR = " "
+        internal const val DEFAULT_SEPARATOR = ""
 
         /**
          * The only way to receive log object.<br></br>
@@ -607,19 +573,27 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
          * @param tag tag for log object
          * @return Log object with tag set and ready to use.
          */
+        @Deprecated("To unify api, use Log() function", ReplaceWith("invoke(tag)", ""))
+        @CheckResult
         operator fun get(tag: String): Log {
             return Loggers.getLogger(tag)
         }
 
-        operator fun invoke(tag: String,
-                            separator: CharSequence? = null,
-                            autoNewLine: Boolean = true,
-                            logLevel: Int = DEFAULT_LOG_LEVEL,
-                            block: Log.LogBuilder.() -> Unit) {
-            val l = Loggers.getLogger(tag)
-            l.stringJuggler.separator = separator
-            l.logBuilder.autoNewLine = autoNewLine
-            block(l.logBuilder)
+        @CheckResult
+        operator fun invoke(tag: String): Log {
+            return Loggers.getLogger(tag)
+        }
+
+        operator fun invoke(
+            tag: String,
+            separator: CharSequence = DEFAULT_SEPARATOR,
+            autoNewLine: Boolean = true,
+            logLevel: Int = DEFAULT_LOG_LEVEL,
+            block: Log.LogBuilder.() -> Unit
+        ) {
+            val l = Loggers.getLogger(tag, separator)
+            val builder = if(autoNewLine) l.LogBuilder { nl() } else l.LogBuilder {  }
+            block(builder)
             l.r(logLevel)
         }
 
@@ -627,20 +601,49 @@ class Log internal constructor(tag: String, separator: CharSequence? = null) {
             System.getProperty("wlog.logLevel")?.let {
                 DEFAULT_LOG_LEVEL = when (it) {
                     "verbose" -> VERBOSE
-                    "debug"   -> DEBUG
-                    "info"    -> INFO
-                    "error"   -> ERROR
+                    "debug" -> DEBUG
+                    "info" -> INFO
+                    "error" -> ERROR
                     else -> DEFAULT_LOG_LEVEL
                 }
             }
             System.getProperty("wlog.newLine")?.let {
                 NEW_LINE = it
             }
-
-            System.getProperty("wlog.separator")?.let {
-                DEFAULT_SEPARATOR = it
-            }
         }
     }
+}
 
+internal class MainLog : Log("") {
+
+    override val stringJuggler = MainLogStringJuggler
+
+    private fun isEmpty(): Boolean = !stringJuggler.isNotEmpty() && throwableToLog == null
+
+    override var tag: String = ""
+        private set
+
+    var separator: CharSequence? = DEFAULT_SEPARATOR
+        private set
+
+    fun setup(tag: String, separator: CharSequence): MainLog {
+        check(isEmpty())
+
+        this.tag = tag
+        stringJuggler.setSeparator(separator)
+        return this
+    }
+
+    override fun onRelease() {
+        stringJuggler.clear()
+    }
+}
+
+internal class SingleStatementLog(tag: String, separator: CharSequence? = null) : Log(tag) {
+
+    override var stringJuggler: StringJuggler = StringJuggler(separator)
+
+    override fun onRelease() {
+        stringJuggler = stringJuggler.dispose()
+    }
 }

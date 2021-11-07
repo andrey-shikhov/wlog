@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015-2020 Andrew Shikhov.
+ * Copyright 2015-2021 Andrew Shikhov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package me.shikhov.wlog
 
+import androidx.annotation.CheckResult
+
 /**
  * Useful class to prepare output for array
  */
@@ -29,12 +31,12 @@ class SequenceFormat(val prefix: CharSequence,
      * @return new instance of SequenceFormatter
      */
 
+    @CheckResult
     fun copy(prefix: CharSequence = this.prefix,
              postfix: CharSequence = this.postfix,
              separator: CharSequence = this.separator,
              limit: Int = this.limit,
              truncated: CharSequence = this.truncated) =
-
         SequenceFormat(prefix,
                        postfix,
                        separator,
@@ -45,3 +47,4 @@ class SequenceFormat(val prefix: CharSequence,
         val DEFAULT = SequenceFormat("[", "]", ", ", -1, "...")
     }
 }
+

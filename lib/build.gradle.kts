@@ -10,13 +10,12 @@ plugins {
     signing
 }
 android {
-    compileSdkVersion(30)
+    compileSdk = buildConfig.compileSdk
 
     defaultConfig {
-        minSdkVersion(15)
-        targetSdkVersion(30)
-        versionCode(6)
-        versionName("3.0.0")
+        minSdk = buildConfig.minSdk
+        targetSdk = buildConfig.targetSdk
+        setProperty("archivesBaseName", "wlog")
     }
 
     buildTypes {
@@ -27,7 +26,8 @@ android {
 }
 
 dependencies {
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.4.20")
+    implementation(libs.androidx.annotation)
+    dokkaHtmlPlugin(libs.dokka.plugin)
 }
 
 tasks.dokkaHtml.configure {
@@ -41,16 +41,12 @@ val secrets = Properties().apply {
     load(FileInputStream(rootProject.file("local.properties")))
 }
 
-val signingKeyId = secrets.getProperty("signingKeyId", "")
-val signingPassword = secrets.getProperty("signingPassword", "")
-val signingSecretKeyRingFile = secrets.getProperty("signingSecretKeyRingFile", "")
 val ossrhUsername = secrets.getProperty("ossrhUsername", "")
 val ossrhPassword = secrets.getProperty("ossrhPassword", "")
 
 val androidSourcesJar by tasks.register<Jar>("androidSourcesJar") {
     archiveClassifier.set("sources")
     from(android.sourceSets.getByName("main").java.srcDirs)
-//    from(android.sourceSets.getByName("main").kotlin.srcDirs())
 }
 
 val dokkaJavadocJar by tasks.register<Jar>("dokkaJavadocJar") {
@@ -76,9 +72,9 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 groupId = "me.shikhov"
                 artifactId = "wlog"
-                version = "3.0.0"
+                version = buildConfig.libraryVersion
 
-                artifact("$buildDir/outputs/aar/${project.name}-release.aar")
+                artifact("$buildDir/outputs/aar/wlog-release.aar")
                 artifact(androidSourcesJar)
                 artifact(dokkaJavadocJar)
 
@@ -135,7 +131,6 @@ afterEvaluate {
     }
 
     signing {
-        sign(publishing.publications.getByName("release"))
-        useInMemoryPgpKeys(signingKeyId, signingSecretKeyRingFile, signingPassword)
+        sign(publishing.publications["release"])
     }
 }

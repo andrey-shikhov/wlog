@@ -3,32 +3,34 @@ Android Log wrapper with handy DSL(with extra features like line dividers) and c
 _________________
 # CURRENT VERSION
 Release: ![Maven Central](https://img.shields.io/maven-central/v/me.shikhov/wlog)
-Built with: ![Kotlin](https://img.shields.io/badge/kotlin-1.4.31-blue)
-Requires kotlin stdlib 1.4.31
+Built with: ![Kotlin](https://img.shields.io/badge/kotlin-1.5.30-blue)
+Android: ![minSdk](https://img.shields.io/badge/minSdk-15-blue) 
  
 # Migration
 For the sake of the smooth migration, there are all the methods of the original Log class such as 
 `Log.d(tag, message,  throwable)` and so on.<br> So, for quick migration replace all `import android.util.Log;` to `import me.shikhov.wlog.Log;` and all must work as before.
-But remember if a string concatenation is used in such methods it should be replaced with `append()` or 'a()' calls
+But remember if a string concatenation is used in such methods it should be replaced with `a()`(shortcut to append) calls
+Also log builder is available as function block via: `Log(tag) { -log actions here- }`
 
 # Installation
 Library is in `mavenCentral` repository, so you only need to declare it in dependencies in your `build.gradle` for groovy or `build.gradle.kts` for kotlin dsl build scripts
 ```
 // groovy
 dependencies {
-    implementation 'me.shikhov:wlog:3.0.0'
+    implementation 'me.shikhov:wlog:3.5.0'
 }
 
 // kotlin
 dependencies {
-   implementation("me.shikhov:wlog:3.0.0")
+   implementation("me.shikhov:wlog:3.5.0")
 }
 ```
 
 # Usage examples
 ```
-  WILL BE UPDATED SOON
+  WILL BE UPDATED SOON  
 ```
+For now see [examples](./app/src/main/java/me/shikhov/wlogtest/MainActivity.kt)
 
 # Change log
 [See here](./changelog.md)

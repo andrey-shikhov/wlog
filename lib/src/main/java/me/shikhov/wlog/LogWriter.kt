@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2015-2020 Andrew Shikhov.
+ * Copyright 2015-2021 Andrew Shikhov.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,22 @@
  */
 package me.shikhov.wlog
 
-import android.os.Looper
-
-internal object Loggers {
-
-    private val mainThreadId = Looper.getMainLooper().thread.id
-
-    internal val mainLogger: Log by lazy {
-        Log("LOG")
-    }
-
-    fun getLogger(tag: String): Log {
-        val threadId = Thread.currentThread().id
-
-        if(threadId == mainThreadId) {
-            return mainLogger.apply {
-                this.tag = tag
-            }
-        }
-
-        return Log(tag)
-    }
+/**
+ * Basic interface for log writers
+ * @see LogcatWriter
+ */
+interface LogWriter {
+    /**
+     * Method should write log to underlying storage/console. <br></br>
+     * message and throwable can't be null simultaneously.
+     * @param logLevel
+     * logLevel from [Log.VERBOSE] to [Log.ASSERT]
+     * @param tag
+     * nonnull tag, usually class name.
+     * @param message
+     * nullable message to log
+     * @param throwable
+     * nullable throwable to log
+     */
+    fun write(logLevel: Int, tag: String, message: String?, throwable: Throwable?)
 }
